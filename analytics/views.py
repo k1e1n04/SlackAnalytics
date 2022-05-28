@@ -4,20 +4,23 @@ from random import randint
 from django.views import generic
 import requests
 import json
+import os
 from datetime import datetime
 from pytz import timezone, utc
 from tzlocal import get_localzone
+from dotenv import load_dotenv
 from azure.cognitiveservices.language.textanalytics import TextAnalyticsClient
 from msrest.authentication import CognitiveServicesCredentials
+load_dotenv('.env') 
 
-subscription_key = "d79573f2f43541c09112691e2dd2ee57"
+subscription_key = os.environ.get("subscription_key")
 credentials = CognitiveServicesCredentials(subscription_key)
-text_analytics_url = "https://slackanalytics.cognitiveservices.azure.com/"
+text_analytics_url = os.environ.get("text_analytics_url")
 text_analytics = TextAnalyticsClient(endpoint=text_analytics_url, credentials=credentials)
 
-SLACK_CHANNEL_ID = 'C035M8NL7PD'
-SLACK_URL = "https://slack.com/api/conversations.history"
-TOKEN = "xoxp-1668835028433-1680046787136-3560202701600-3cb166e1d51c5d1c6d1e4a6a85ddd828"
+SLACK_CHANNEL_ID = os.environ.get("SLACK_CHANNEL_ID")
+SLACK_URL = os.environ.get("SLACK_URL")
+TOKEN = os.environ.get("TOKEN")
 
 def toya_analytics(request):
     payload = {
