@@ -1,2 +1,9 @@
 Django
 jinja2
+python-dotenv
+json
+datetime
+tzlocal
+pytz
+azure.cognitiveservices.language.textanalytics
+multiprocessing
