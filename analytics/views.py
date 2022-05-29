@@ -11,6 +11,8 @@ from tzlocal import get_localzone
 from dotenv import load_dotenv
 from azure.cognitiveservices.language.textanalytics import TextAnalyticsClient
 from msrest.authentication import CognitiveServicesCredentials
+from os.path import join, dirname
+dotenv_path = join(dirname(__file__), '.env')
 load_dotenv('.env') 
 
 subscription_key = os.environ.get("subscription_key")
