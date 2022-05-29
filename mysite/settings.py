@@ -18,8 +18,8 @@ load_dotenv()
 
 dotenv_path = join(dirname(__file__), ".env")
 
-SUBSCRIPTION_KEY = os.getenv("subscription_key")
-TEXT_ANALYTICS_URL = os.getenv("text_analytics_url")
+SUBSCRIPTION_KEY = os.getenv("SUBSCRIPTION_KEY")
+TEXT_ANALYTICS_URL = os.getenv("TEXT_ANALYTICS_URL")
 
 SLACK_CHANNEL_ID = os.getenv("SLACK_CHANNEL_ID")
 SLACK_URL = os.getenv("SLACK_URL")
