@@ -13,7 +13,7 @@ from azure.cognitiveservices.language.textanalytics import TextAnalyticsClient
 from msrest.authentication import CognitiveServicesCredentials
 from os.path import join, dirname
 dotenv_path = join(dirname(__file__), '.env')
-load_dotenv('.env') 
+load_dotenv(dotenv_path) 
 
 subscription_key = os.environ.get("subscription_key")
 credentials = CognitiveServicesCredentials(subscription_key)
