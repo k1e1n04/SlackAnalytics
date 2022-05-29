@@ -12,6 +12,18 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 from pathlib import Path
 import os
+from os.path import join, dirname
+from dotenv import load_dotenv
+load_dotenv() 
+
+dotenv_path = join(dirname(__file__), ".env")
+
+SUBSCRIPTION_KEY = os.getenv("subscription_key")
+TEXT_ANALYTICS_URL = os.getenv("text_analytics_url")
+
+SLACK_CHANNEL_ID = os.getenv("SLACK_CHANNEL_ID")
+SLACK_URL = os.getenv("SLACK_URL")
+TOKEN = os.getenv("TOKEN")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,7 +33,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-91kz#$#i*p7e+5bsv%x@wyrfoi#vl(fj7ub%xr%t_r3rkw#+4s'
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

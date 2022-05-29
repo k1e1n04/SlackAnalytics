@@ -11,18 +11,16 @@ from tzlocal import get_localzone
 from dotenv import load_dotenv
 from azure.cognitiveservices.language.textanalytics import TextAnalyticsClient
 from msrest.authentication import CognitiveServicesCredentials
-from os.path import join, dirname
-dotenv_path = join(dirname(__file__), '.env')
-load_dotenv(dotenv_path) 
+from django.conf import settings
 
-subscription_key = os.environ.get("subscription_key")
+subscription_key = settings.SUBSCRIPTION_KEY
 credentials = CognitiveServicesCredentials(subscription_key)
-text_analytics_url = os.environ.get("text_analytics_url")
+text_analytics_url = settings.TEXT_ANALYTICS_URL
 text_analytics = TextAnalyticsClient(endpoint=text_analytics_url, credentials=credentials)
 
-SLACK_CHANNEL_ID = os.environ.get("SLACK_CHANNEL_ID")
-SLACK_URL = os.environ.get("SLACK_URL")
-TOKEN = os.environ.get("TOKEN")
+SLACK_CHANNEL_ID = settings.SLACK_CHANNEL_ID
+SLACK_URL = settings.SLACK_URL
+TOKEN = settings.TOKEN
 
 def toya_analytics(request):
     payload = {
