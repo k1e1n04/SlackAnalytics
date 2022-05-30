@@ -24,8 +24,8 @@ TOKEN = settings.TOKEN
 
 def toya_analytics(request):
     payload = {
-        "channel" : SLACK_CHANNEL_ID,
-        "oldest" : "1622761200"
+        "channel" : SLACK_CHANNEL_ID
+        # "oldest" : "1622761200"
     }
     headersAuth = {
         'Authorization' : 'Bearer ' + str(TOKEN), 
