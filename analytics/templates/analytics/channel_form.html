@@ -1,0 +1,28 @@
+{% extends 'analytics/base.html' %}
+{% block content %}
+
+<h4>チャンネルの登録</h4>
+
+<form action='' method='post'>{% csrf_token %}
+  <div class="card col-8">
+    <div class="card-body">
+      {{ form.non_field_errors }}
+      {% for field in form %}
+        <div class="form-group">
+            <label for="{{ field.id_for_label }}"><b>{{ field.label_tag }}</b></label>
+            <div>
+              {{ field }}
+              {{ field.errors }}
+            </div>
+        </div>
+      {% endfor %}
+      {% csrf_token %}
+      <button type='submit' class='submit btn btn-primary btn-lg btn-block col-4'>作成</button>
+    </div>
+  </div>
+</form>
+<div style="margin-bottom:40px;">
+    <a href='JavaScript:history.back()'>&lt; 戻る</a>
+</div>
+
+{% endblock %}

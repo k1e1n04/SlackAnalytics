@@ -1,0 +1,23 @@
+{% extends 'analytics/base.html' %}
+
+{% block content %}
+<h4>メンバー一覧</h4>
+
+<table class='table' style="background-color: white;margin-top: 20px;">
+    <tr>
+        <th>名前</th><th>拠点</th><th>部署</th><th>登録日</th>
+    </tr>
+    {% for employee in object_list %}
+
+    <tr>
+        <td>{{ employee.name }}</td>
+        <td>{{ employee.base }}</td>
+        <td>{{ employee.department }}</td>
+        <td>{{ employee.created_at }}</td>
+    </tr>
+    {% endfor %}
+    <div>
+      <a href='{% url "analytics:employee_create" %}'>メンバー登録へ</a>
+    </div>
+</table>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends 'analytics/base.html' %}
+
+{% block content %}
+<h4>部署一覧</h4>
+
+<table class='table' style="background-color: white;margin-top: 20px;">
+    <tr>
+        <th>部署名</th><th>拠点</th>
+    </tr>
+    {% for department in object_list %}
+
+    <tr>
+        <td>{{ department.name }}</td>
+        <td>{{ department.base }}</td>
+    </tr>
+    {% endfor %}
+    <div>
+      <a href='{% url "analytics:department_create" %}'>部署登録へ</a>
+    </div>
+</table>
+{% endblock %}

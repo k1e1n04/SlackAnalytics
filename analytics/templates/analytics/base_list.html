@@ -1,0 +1,20 @@
+{% extends 'analytics/base.html' %}
+
+{% block content %}
+<h4>拠点一覧</h4>
+
+<table class='table' style="background-color: white;margin-top: 20px;">
+    <tr>
+        <th>拠点名</th>
+    </tr>
+    {% for base in object_list %}
+
+    <tr>
+        <td>{{ base.name }}</td>
+    </tr>
+    {% endfor %}
+    <div>
+      <a href='{% url "analytics:base_create" %}'>拠点登録へ</a>
+    </div>
+</table>
+{% endblock %}

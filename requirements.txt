@@ -5,5 +5,9 @@ json
 datetime
 tzlocal
 pytz
-azure.cognitiveservices.language.textanalytics
 multiprocessing
+pymysq
+bootstrap4
+PyCryptodome
+python-dateutil
+cryptography

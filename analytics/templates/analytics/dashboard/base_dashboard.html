@@ -1,0 +1,23 @@
+{% extends 'analytics/base.html' %}
+
+{% block content %}
+    <h4>拠点別ダッシュボード</h4>
+    <table class='table' style="background-color: white;">
+        <tr>
+            <th>拠点名</th>
+            <th>チャンネル数</th>
+            <th>メンバー数</th>
+            <th>今週の投稿数</th>
+            <th>今週のメンバー<br>平均投稿数</th>
+        </tr>
+        {% for dashboard in dashboards %}
+            <tr>
+                <td style="color: #3d9ae5 ;">{{dashboard.base}}</td>
+                <td>{{dashboard.channel_count}}</td>
+                <td>{{dashboard.member_count}}</td>
+                <td class="number">{{dashboard.one_week_posts_count}}<span>(先週比{{dashboard.compare_posts_count}})</span></td>
+                <td class="number">{{dashboard.per_posts}}<span>(先週比{{dashboard.compare_per_posts}})</span></td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

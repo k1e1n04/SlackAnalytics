@@ -1,0 +1,21 @@
+{% extends 'analytics/base.html' %}
+
+{% block content %}
+<h4>チャンネル一覧</h4>
+
+<table class='table' style="background-color: white;margin-top: 20px;">
+    <tr>
+        <th>チャンネル名</th><th>拠点</th>
+    </tr>
+    {% for channel in object_list %}
+
+    <tr>
+        <td>{{ channel.name }}</td>
+        <td>{{ channel.base }}</td>
+    </tr>
+    {% endfor %}
+    <div>
+      <a href='{% url "analytics:channel_create" %}'>チャンネル登録へ</a>
+    </div>
+</table>
+{% endblock %}
