@@ -5,6 +5,12 @@ import requests
 import json
 from django.db.models import Avg
 import time
+#ダッシュボードの共通部分の処理
+def return_compare_posts_conut(one_week_posts,two_week_posts):
+    one_week_posts_count = len(one_week_posts)
+    two_week_posts_count = len(two_week_posts)
+    compare_posts_count = one_week_posts_count-two_week_posts_count
+    return one_week_posts_count,compare_posts_count,two_week_posts_count
 
 #メンバー登録時の処理↓
 def get_slack_posts(channels,ago,form):

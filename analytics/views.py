@@ -1,17 +1,5 @@
-from email import message
-from multiprocessing import context
-from pipes import Template
-from pyexpat.errors import messages
-from turtle import end_poly
-from django.shortcuts import render
-from random import randint
 from django.views import generic
-import os
 from .forms import EmployeeForm
-from pytz import timezone, utc
-from tzlocal import get_localzone
-from dotenv import load_dotenv
-from django.conf import settings
 from .models import Base,Department,Channel,Employee,Post
 from django.views import generic
 from django.urls import reverse_lazy
@@ -35,9 +23,7 @@ class base_dashboard(LoginRequiredMixin,generic.TemplateView):
                 continue
             one_week_posts = Post.objects.filter(base=b,created_at__gt=one_week_ago)
             two_week_posts = Post.objects.filter(base=b,created_at__gt=two_week_ago,created_at__lte=one_week_ago)
-            one_week_posts_count = len(one_week_posts)
-            two_week_posts_count = len(two_week_posts)
-            compare_posts_count = one_week_posts_count-two_week_posts_count
+            one_week_posts_count,compare_posts_count,two_week_posts_count = analytics.domain.return_compare_posts_conut(one_week_posts,two_week_posts)
             per_posts = round(one_week_posts_count/member_count)
             compare_per_posts = round(per_posts-(two_week_posts_count/member_count))
             channel_count = len(Channel.objects.filter(base=b))
@@ -67,10 +53,8 @@ class channel_dashboard(LoginRequiredMixin,generic.TemplateView):
                 continue
             base = c.base
             one_week_posts = Post.objects.filter(channel=c,created_at__gt=one_week_ago)
-            one_week_posts_count = len(one_week_posts)
             two_week_posts = Post.objects.filter(channel=c,created_at__gt=two_week_ago,created_at__lte=one_week_ago)
-            two_week_posts_count = len(two_week_posts)
-            compare_posts_count = one_week_posts_count-two_week_posts_count
+            one_week_posts_count,compare_posts_count,two_week_posts_count = analytics.domain.return_compare_posts_conut(one_week_posts,two_week_posts)
             dashboard_object = {'base':base , 'channel_name':c.name, 'one_week_posts_count': one_week_posts_count,'compare_posts_count': compare_posts_count}
             dashboard.append(dashboard_object)
         context['dashboards'] = dashboard
@@ -87,12 +71,10 @@ class employee_dashboard(LoginRequiredMixin,generic.TemplateView):
             total_posts = Post.objects.filter(employee=e)
             if total_posts == 0:
                 continue
-            one_week_posts = Post.objects.filter(employee=e,created_at__gt=one_week_ago)
-            one_week_posts_count = len(one_week_posts)
             base = e.base
+            one_week_posts = Post.objects.filter(employee=e,created_at__gt=one_week_ago)
             two_week_posts = Post.objects.filter(employee=e,created_at__gt=two_week_ago,created_at__lte=one_week_ago)
-            two_week_posts_count = len(two_week_posts)
-            compare_posts_count = one_week_posts_count-two_week_posts_count
+            one_week_posts_count,compare_posts_count,two_week_posts_count = analytics.domain.return_compare_posts_conut(one_week_posts,two_week_posts)
             dashboard_object = {'base':base , 'employee_name':e.name, 'one_week_posts_count': one_week_posts_count,'compare_posts_count': compare_posts_count}
             dashboard.append(dashboard_object)
         context['dashboards'] = dashboard
