@@ -1,12 +1,16 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-<h1>Sign up</h1>
+<h4>Sign up</h4>
 <section class='common-form'>
     <form method='post'>
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type='submit'>Sign up</button>
+        <div class="card col-8">
+            <div class="card-body">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type='submit' class='submit btn btn-primary btn-lg btn-block col-4'>Sign up</button>
+            </div>
+        </div>
     </form>
 </section>
 {% endblock %}
