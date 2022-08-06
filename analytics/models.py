@@ -1,9 +1,9 @@
+from re import A
 from ssl import create_default_context
 from django.db import models
 from django.utils import timezone
 
 # Create your models here.
-
 
 class Base(models.Model):
     name = models.CharField(verbose_name="拠点",max_length=50,unique=True)
