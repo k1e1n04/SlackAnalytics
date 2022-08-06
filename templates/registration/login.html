@@ -1,7 +1,7 @@
 {% extends '../layout.html' %}
 
 {% block content %}
-<h1>Login</h1>
+<h4>ログイン</h4>
 <section class='common-form'>
     {% if form.errors %}
         <p class='error-msg'>Your username and password didn't match. Please try again.</p>
@@ -17,10 +17,14 @@
     {% endif %}
 
     <form action='{% url "login" %}' method='post'>
-        {% csrf_token %}
-        <input type='hidden' name='next' value='{{ next }}'/>
-        {{ form.as_p }}
-        <button type='submit'>Login</button>
+        <div class="card col-8">
+            <div class="card-body">
+                {% csrf_token %}
+                <input type='hidden' name='next' value='{{ next }}'/>
+                {{ form.as_p }}
+                <button type='submit' class='submit btn btn-primary btn-lg btn-block col-4'>Login</button>
+            </div>
+        </div>
     </form>
 </section>
 {% endblock %}
