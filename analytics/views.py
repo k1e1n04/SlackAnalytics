@@ -1,5 +1,6 @@
 from email import message
 from multiprocessing import context
+from pipes import Template
 from pyexpat.errors import messages
 from turtle import end_poly
 from django.shortcuts import render
@@ -22,28 +23,29 @@ one_week_ago = analytics.process.get_time.get_diff_days_ago(7)
 two_week_ago = analytics.process.get_time.get_diff_days_ago(14)
 
 #拠点別ダッシュボード
-def base_dashboard(request):
-    context = {}
-    dashboard = []
-    bases = Base.objects.all()
-    for b in bases:
-        member_count = len(Employee.objects.filter(base=b))
-        if member_count == 0:
-            continue
-        one_week_posts = Post.objects.filter(base=b,created_at__gt=one_week_ago)
-        two_week_posts = Post.objects.filter(base=b,created_at__gt=two_week_ago,created_at__lte=one_week_ago)
-        one_week_posts_count = len(one_week_posts)
-        two_week_posts_count = len(two_week_posts)
-        compare_posts_count = one_week_posts_count-two_week_posts_count
-        per_posts = round(one_week_posts_count/member_count)
-        compare_per_posts = round(per_posts-(two_week_posts_count/member_count))
-        channel_count = len(Channel.objects.filter(base=b))
-        total_posts = Post.objects.filter(base=b)
-        dashboard_object = {'base':b.name , 'member_count':member_count, 'channel_count':channel_count, 'one_week_posts_count': one_week_posts_count, 'compare_posts_count': compare_posts_count,'per_posts':per_posts,'compare_per_posts':compare_per_posts}
-        dashboard.append(dashboard_object)
-    context = {'dashboards':dashboard}
-
-    return render(request,'analytics/dashboard/base_dashboard.html',context)
+class base_dashboard(LoginRequiredMixin,generic.TemplateView):
+    template_name = "analytics/dashboard/base_dashboard.html"
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        dashboard = []
+        bases = Base.objects.all()
+        for b in bases:
+            member_count = len(Employee.objects.filter(base=b))
+            if member_count == 0:
+                continue
+            one_week_posts = Post.objects.filter(base=b,created_at__gt=one_week_ago)
+            two_week_posts = Post.objects.filter(base=b,created_at__gt=two_week_ago,created_at__lte=one_week_ago)
+            one_week_posts_count = len(one_week_posts)
+            two_week_posts_count = len(two_week_posts)
+            compare_posts_count = one_week_posts_count-two_week_posts_count
+            per_posts = round(one_week_posts_count/member_count)
+            compare_per_posts = round(per_posts-(two_week_posts_count/member_count))
+            channel_count = len(Channel.objects.filter(base=b))
+            total_posts = Post.objects.filter(base=b)
+            dashboard_object = {'base':b.name , 'member_count':member_count, 'channel_count':channel_count, 'one_week_posts_count': one_week_posts_count, 'compare_posts_count': compare_posts_count,'per_posts':per_posts,'compare_per_posts':compare_per_posts}
+            dashboard.append(dashboard_object)
+        context['dashboards'] = dashboard
+        return context
 
 class BaseDetailView(LoginRequiredMixin,generic.DeleteView):
     model = Base
@@ -53,46 +55,48 @@ class BaseDetailView(LoginRequiredMixin,generic.DeleteView):
 
 
 #チャンネル別ダッシュボード
-def channel_dashboard(request):
-    context = {}
-    dashboard = []
-    channels = Channel.objects.all()
-    for c in channels:
-        total_posts = Post.objects.filter(channel=c)
-        if total_posts == 0:
-            continue
-        base = c.base
-        one_week_posts = Post.objects.filter(channel=c,created_at__gt=one_week_ago)
-        one_week_posts_count = len(one_week_posts)
-        two_week_posts = Post.objects.filter(channel=c,created_at__gt=two_week_ago,created_at__lte=one_week_ago)
-        two_week_posts_count = len(two_week_posts)
-        compare_posts_count = one_week_posts_count-two_week_posts_count
-        dashboard_object = {'base':base , 'channel_name':c.name, 'one_week_posts_count': one_week_posts_count,'compare_posts_count': compare_posts_count}
-        dashboard.append(dashboard_object)
-    context = {'dashboards':dashboard}
-
-    return render(request,'analytics/dashboard/channel_dashboard.html',context)
+class channel_dashboard(LoginRequiredMixin,generic.TemplateView):
+    template_name = 'analytics/dashboard/channel_dashboard.html'
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        dashboard = []
+        channels = Channel.objects.all()
+        for c in channels:
+            total_posts = Post.objects.filter(channel=c)
+            if total_posts == 0:
+                continue
+            base = c.base
+            one_week_posts = Post.objects.filter(channel=c,created_at__gt=one_week_ago)
+            one_week_posts_count = len(one_week_posts)
+            two_week_posts = Post.objects.filter(channel=c,created_at__gt=two_week_ago,created_at__lte=one_week_ago)
+            two_week_posts_count = len(two_week_posts)
+            compare_posts_count = one_week_posts_count-two_week_posts_count
+            dashboard_object = {'base':base , 'channel_name':c.name, 'one_week_posts_count': one_week_posts_count,'compare_posts_count': compare_posts_count}
+            dashboard.append(dashboard_object)
+        context['dashboards'] = dashboard
+        return context
 
 #メンバー別ダッシュボード
-def employee_dashboard(request):
-    context = {}
-    dashboard = []
-    employees = Employee.objects.all()
-    for e in employees:
-        total_posts = Post.objects.filter(employee=e)
-        if total_posts == 0:
-            continue
-        one_week_posts = Post.objects.filter(employee=e,created_at__gt=one_week_ago)
-        one_week_posts_count = len(one_week_posts)
-        base = e.base
-        two_week_posts = Post.objects.filter(employee=e,created_at__gt=two_week_ago,created_at__lte=one_week_ago)
-        two_week_posts_count = len(two_week_posts)
-        compare_posts_count = one_week_posts_count-two_week_posts_count
-        dashboard_object = {'base':base , 'employee_name':e.name, 'one_week_posts_count': one_week_posts_count,'compare_posts_count': compare_posts_count}
-        dashboard.append(dashboard_object)
-    context = {'dashboards':dashboard}
-
-    return render(request,'analytics/dashboard/employee_dashboard.html',context)
+class employee_dashboard(LoginRequiredMixin,generic.TemplateView):
+    template_name = "analytics/dashboard/employee_dashboard.html"
+    def get_context_data(self,**kwargs):
+        context = super().get_context_data(**kwargs)
+        dashboard = []
+        employees = Employee.objects.all()
+        for e in employees:
+            total_posts = Post.objects.filter(employee=e)
+            if total_posts == 0:
+                continue
+            one_week_posts = Post.objects.filter(employee=e,created_at__gt=one_week_ago)
+            one_week_posts_count = len(one_week_posts)
+            base = e.base
+            two_week_posts = Post.objects.filter(employee=e,created_at__gt=two_week_ago,created_at__lte=one_week_ago)
+            two_week_posts_count = len(two_week_posts)
+            compare_posts_count = one_week_posts_count-two_week_posts_count
+            dashboard_object = {'base':base , 'employee_name':e.name, 'one_week_posts_count': one_week_posts_count,'compare_posts_count': compare_posts_count}
+            dashboard.append(dashboard_object)
+        context['dashboards'] = dashboard
+        return context
 
 #メンバー管理関連
 class EmployeeListView(LoginRequiredMixin,generic.ListView):

@@ -1,7 +1,5 @@
 from re import A
-from ssl import create_default_context
 from django.db import models
-from django.utils import timezone
 
 # Create your models here.
 
