@@ -41,14 +41,14 @@
                 <span class='navbar-text'>{{ user }}</span>
             </li>
             <li>
+                <a href='{% url "accounts:index" %}' class='user_list'>管理者ユーザー一覧</a>
+            </li>
+            <li>
                 <a href='{% url "logout" %}' class='logout'>Logout</a>
             </li>
         {% else %}
             <li>
               <a href='{% url "login" %}' class='login'>Login</a>
-            </li>
-            <li>
-              <a href='{% url "accounts:signup" %}' class='signup'> Sign up </a>
             </li>
         {% endif %}
       </ul>
