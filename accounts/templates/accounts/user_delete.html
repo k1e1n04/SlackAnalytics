@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h4>本当に削除しますか?</h4>
+<form method="post">
+  {% csrf_token %}
+  <input type="submit" class="btn btn-danger" value="削除">
+  <a href="{% url 'accounts:index' %} " class="submit btn btn-primary">キャンセル</a>
+</form>
+{% endblock %}

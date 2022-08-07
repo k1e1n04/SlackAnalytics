@@ -8,12 +8,18 @@
     <tr>
         <th>ユーザー名</th>
         <th>拠点名</th>
+        <th></th>
     </tr>
-    {% for user in object_list %}
+    {% for adminuser in object_list %}
 
     <tr>
-        <td>{{ user.last_name }}{{ user.first_name }}</td>
-        <td>{{ user.base }}</td>
+        <td>{{ adminuser.last_name }}{{ adminuser.first_name }}</td>
+        <td>{{ adminuser.base }}</td>
+        {% if user.base == adminuser.base %}
+            <td><a href="{% url 'accounts:delete' pk=user.pk %}">>>>管理者を削除する</a></td>
+        {% else %}
+            <td>削除できません</td>
+        {% endif %}
     </tr>
     {% endfor %}
     <div>
