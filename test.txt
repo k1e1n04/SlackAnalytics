@@ -1,0 +1,37 @@
+APScheduler==3.9.1
+asgiref @ file:///home/conda/feedstock_root/build_artifacts/asgiref_1652752042988/work
+azure-cognitiveservices-language-textanalytics==0.2.1
+azure-common==1.1.28
+azure-core==1.24.0
+azure-mgmt-core==1.3.0
+bootstrap4==0.1.0
+certifi==2022.6.15
+cffi @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/croot-2p6q7e2r/cffi_1642701115063/work
+charset-normalizer==2.0.12
+cryptography @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_b470f7cb-c8f1-42c9-b84f-23789ea77e7c9difcqh4/croots/recipe/cryptography_1652101134392/work
+dj-database-url==0.5.0
+Django @ file:///Users/runner/miniforge3/conda-bld/django_1659566445771/work
+django-heroku @ file:///home/conda/feedstock_root/build_artifacts/django-heroku_1642605802805/work
+gunicorn @ file:///opt/concourse/worker/volumes/live/f7b39e0f-a194-41b6-4722-90b8829755e9/volume/gunicorn_1617120639810/work
+idna==3.3
+isodate==0.6.1
+msrest==0.6.21
+mysqlclient @ file:///opt/concourse/worker/volumes/live/3e2c08bc-c6d4-44b9-6985-8c1059f99ec2/volume/mysqlclient_1609786255460/work
+oauthlib==3.2.0
+psycopg2 @ file:///Users/runner/miniforge3/conda-bld/psycopg2-split_1640944566233/work
+pycparser @ file:///tmp/build/80754af9/pycparser_1636541352034/work
+pycryptodome==3.14.1
+PyMySQL==1.0.2
+python-dateutil==2.8.2
+python-dotenv==0.20.0
+pytz==2022.1
+pytz-deprecation-shim==0.1.0.post0
+requests==2.27.1
+requests-oauthlib==1.3.1
+six==1.16.0
+sqlparse @ file:///home/conda/feedstock_root/build_artifacts/sqlparse_1631317292236/work
+typing_extensions @ file:///home/conda/feedstock_root/build_artifacts/typing_extensions_1656706066251/work
+tzdata==2022.1
+tzlocal==4.2
+urllib3==1.26.9
+whitenoise==4.1.2
