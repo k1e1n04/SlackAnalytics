@@ -160,8 +160,5 @@ except ImportError:
 
 if not DEBUG:
     import django_heroku
-    MIDDLEWARE += [
-        'whitenoise.middleware.WhiteNoiseMiddleware',
-    ]
     django_heroku.settings(locals())
     STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
