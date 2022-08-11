@@ -12,6 +12,7 @@ cryptography
 dj-database-url==0.5.0
 Django
 django-heroku
+django-utils-six==2.0
 gunicorn
 idna==3.3
 isodate==0.6.1
