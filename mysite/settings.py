@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 from pathlib import Path
 import os
 from os.path import join, dirname
+import dj_database_url
 from dotenv import load_dotenv
 load_dotenv() 
 
@@ -102,6 +103,8 @@ DATABASES = {
     }
 }
 
+db_from_env = dj_database_url.config(conn_max_age=600, ssl_require=True)
+DATABASES['default'].update(db_from_env)
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -160,5 +163,8 @@ except ImportError:
 
 if not DEBUG:
     import django_heroku
+    MIDDLEWARE += [
+        'whitenoise.middleware.WhiteNoiseMiddleware',
+    ]
     django_heroku.settings(locals())
     STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
