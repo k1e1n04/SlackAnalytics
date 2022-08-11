@@ -13,7 +13,6 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 from pathlib import Path
 import os
 from os.path import join, dirname
-from .local_settings import *
 from dotenv import load_dotenv
 load_dotenv() 
 
