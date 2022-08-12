@@ -25,10 +25,10 @@ def periodic_delete_execution():
 
 def start():
     scheduler = BackgroundScheduler()
-    scheduler.add_job(periodic_execution,'cron',hour=1)
+    scheduler.add_job(periodic_execution,'interval',hours=1)
     scheduler.start()
 
 def start_delete():
     scheduler = BackgroundScheduler()
-    scheduler.add_job(periodic_delete_execution,'cron',day=1)
+    scheduler.add_job(periodic_delete_execution,'interval',weeks=1)
     scheduler.start()
