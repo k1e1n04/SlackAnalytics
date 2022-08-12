@@ -4,7 +4,7 @@ from django.contrib.auth.base_user import AbstractBaseUser
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
   
-  
+
 class CustomUserManager(UserManager):
     use_in_migrations = True
   
@@ -28,7 +28,6 @@ class CustomUserManager(UserManager):
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Superuser must have is_superuser=True.')
         return self._create_user(password, **extra_fields)
-  
   
 class User(AbstractBaseUser, PermissionsMixin):
 

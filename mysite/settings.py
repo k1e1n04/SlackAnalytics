@@ -35,7 +35,8 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 PASSWORD=os.getenv('PASSWORD')
 
-SECURE_SSL_REDIRECT = True
+
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -162,4 +163,5 @@ except ImportError:
 if not DEBUG:
     import django_heroku
     django_heroku.settings(locals())
+    SECURE_SSL_REDIRECT = True
     STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
