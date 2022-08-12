@@ -96,17 +96,6 @@ class EmployeeCreateView(LoginRequiredMixin,generic.edit.CreateView):
 
     def form_valid(self, form):
         form.save()
-        employee_base = form.instance.base
-        #所属拠点のチャンネルを全て取得
-        channels = Channel.objects.filter(base=employee_base)
-        form_instance = form.instance
-        unix_three_month_ago = analytics.process.get_time.get_diff_month_ago_unix(3)
-        analytics.domain.get_slack_posts(channels,unix_three_month_ago,form_instance)
-        unix_two_month_ago = analytics.process.get_time.get_diff_month_ago_unix(2)
-        analytics.domain.get_slack_posts(channels,unix_two_month_ago,form_instance)
-        unix_one_month_ago = analytics.process.get_time.get_diff_month_ago_unix(1)
-        analytics.domain.get_slack_posts(channels,unix_one_month_ago,form_instance)
-
         return super(EmployeeCreateView, self).form_valid(form)              
 
 #チャンネル管理関連
