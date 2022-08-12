@@ -26,3 +26,53 @@
 </div>
 
 {% endblock %}
+
+{% block extrajs %}
+    <script>
+        const BaseElement = $('#id_base');
+        const departmentElement = $('#id_department');
+        const departments = {
+            {% for base in base_list %}
+                '{{ base.pk }}': [
+                    {% for department in base.department_set.all %}
+                        {
+                            'pk': '{{ department.pk }}',
+                            'name': '{{ department.name }}'
+                        },
+                    {% endfor %}
+                ],
+            {% endfor %}
+        };
+
+
+        const changeDepartment = (select) => {
+            departmentElement.children().remove();
+
+            const baseId = BaseElement.val();
+            const departmentList = departments[baseId];
+
+            for (const department of departmentList) {
+                const option = $('<option>');
+                option.val(department['pk']);
+                option.text(department['name']);
+                departmentElement.append(option);
+            }
+
+            if (select !== undefined) {
+                departmentElement.val(select);
+            }
+        };
+
+
+        $('#id_base').on('change', () => {
+            changeDepartment();
+        });
+
+
+        if (BaseElement.val()) {
+            const selectedDepartment = departmentElement.val();
+            changeCategory(selectedDepartment);
+        }
+
+    </script>
+{% endblock %}

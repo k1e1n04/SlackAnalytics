@@ -38,7 +38,7 @@
         </li>
         {% if user.is_authenticated %}
             <li class='nav-time'>
-                <span class='navbar-text'>{{ user.last_name }}{{ user.first_name }}</span>
+              <a href="{% url 'accounts:update' user.pk %}">{{ user.last_name }}{{ user.first_name }}</a>
             </li>
             <li>
                 <a href='{% url "accounts:index" %}' class='user_list'>管理者ユーザー一覧</a>

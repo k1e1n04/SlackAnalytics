@@ -6,6 +6,7 @@ from .models import Base,Department,Channel,Employee,Post
 from dateutil.relativedelta import relativedelta
 now = datetime.now()
 
+
 def periodic_execution():
     one_day_ago = now + timedelta(days=-1)
     one_day_ago = datetime(one_day_ago.year,one_day_ago.month,one_day_ago.day)
@@ -23,9 +24,10 @@ def periodic_delete_execution():
     posts = Post.objects.filter(created_at__lt=half_year_ago)
     posts.delete()
 
+
 def start():
     scheduler = BackgroundScheduler()
-    scheduler.add_job(periodic_execution,'interval',hours=1)
+    scheduler.add_job(periodic_execution,'interval',minutes=15)
     scheduler.start()
 
 def start_delete():
