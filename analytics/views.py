@@ -116,8 +116,12 @@ class ChannelListView(LoginRequiredMixin,generic.ListView):
 
 class ChannelCreateView(LoginRequiredMixin,generic.edit.CreateView):
     model = Channel
-    fields = ['name','base','channel_id'] # '__all__'
+    fields = ['name','base','department','channel_id'] # '__all__'
     success_url = reverse_lazy('analytics:channel_index')
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['base_list'] = Base.objects.all()
+        return context
 
 #拠点管理関連
 class BaseListView(LoginRequiredMixin,generic.ListView):

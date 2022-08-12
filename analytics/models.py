@@ -25,6 +25,12 @@ class Channel(models.Model):
         on_delete=models.PROTECT,
         verbose_name='拠点',
     )
+    department = models.ForeignKey(
+        Department,
+        on_delete=models.PROTECT,
+        verbose_name='部署',
+        default="",
+    )
     def __str__(self):
         return self.name
 
