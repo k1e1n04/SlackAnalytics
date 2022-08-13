@@ -59,6 +59,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -159,9 +160,6 @@ except ImportError:
 if not DEBUG:
     import django_heroku
     django_heroku.settings(locals())
-    MIDDLEWARE += [
-        'whitenoise.middleware.WhiteNoiseMiddleware',
-    ]
     db_from_env = dj_database_url.config(conn_max_age=600, ssl_require=True)
     DATABASES['default'].update(db_from_env)
     STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
