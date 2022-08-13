@@ -10,7 +10,7 @@
     {% for employee in object_list %}
 
     <tr>
-        <td>{{ employee.name }}</td>
+        <td><a href="{% url 'analytics:employee_detail_dashboard' employee.pk %}">{{ employee.name }}</a></td>
         <td>{{ employee.base }}</td>
         <td>{{ employee.department }}</td>
         <td>{{ employee.created_at }}</td>
