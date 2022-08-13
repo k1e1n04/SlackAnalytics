@@ -52,10 +52,11 @@ class channel_dashboard(LoginRequiredMixin,generic.TemplateView):
             if total_posts == 0:
                 continue
             base = c.base
+            department = c.department
             one_week_posts = Post.objects.filter(channel=c,created_at__gt=one_week_ago)
             two_week_posts = Post.objects.filter(channel=c,created_at__gt=two_week_ago,created_at__lte=one_week_ago)
             one_week_posts_count,compare_posts_count,two_week_posts_count = analytics.domain.return_compare_posts_conut(one_week_posts,two_week_posts)
-            dashboard_object = {'base':base , 'channel_name':c.name, 'one_week_posts_count': one_week_posts_count,'compare_posts_count': compare_posts_count}
+            dashboard_object = {'base':base , 'channel_name':c.name, 'department':c.department, '   one_week_posts_count': one_week_posts_count,'compare_posts_count': compare_posts_count}
             dashboard.append(dashboard_object)
         context['dashboards'] = dashboard
         return context
@@ -72,10 +73,11 @@ class employee_dashboard(LoginRequiredMixin,generic.TemplateView):
             if total_posts == 0:
                 continue
             base = e.base
+            department = e.department
             one_week_posts = Post.objects.filter(employee=e,created_at__gt=one_week_ago)
             two_week_posts = Post.objects.filter(employee=e,created_at__gt=two_week_ago,created_at__lte=one_week_ago)
             one_week_posts_count,compare_posts_count,two_week_posts_count = analytics.domain.return_compare_posts_conut(one_week_posts,two_week_posts)
-            dashboard_object = {'base':base , 'employee_name':e.name, 'one_week_posts_count': one_week_posts_count,'compare_posts_count': compare_posts_count}
+            dashboard_object = {'base':base , 'employee_name':e.name, 'department':department, 'one_week_posts_count': one_week_posts_count,'compare_posts_count': compare_posts_count}
             dashboard.append(dashboard_object)
         context['dashboards'] = dashboard
         return context
