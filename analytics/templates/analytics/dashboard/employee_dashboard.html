@@ -6,12 +6,14 @@
         <tr>
             <th>メンバー名</th>
             <th>拠点名</th>
+            <th>部署名</th>
             <th>今週の投稿数</th>
         </tr>
         {% for dashboard in dashboards %}
             <tr>
                 <td style="color: #3d9ae5 ;">{{dashboard.employee_name}}</td>
                 <td>{{dashboard.base}}</td>
+                <td>{{dashboard.department}}</td>
                 <td class="number">{{dashboard.one_week_posts_count}}<span>(先週比{{dashboard.compare_posts_count}})</span></td>
             </tr>
         {% endfor %}
