@@ -19,7 +19,6 @@ load_dotenv()
 
 dotenv_path = join(dirname(__file__), ".env")
 
-SLACK_CHANNEL_ID = os.getenv("SLACK_CHANNEL_ID")
 SLACK_URL = os.getenv("SLACK_URL")
 TOKEN = os.getenv("TOKEN")
 
@@ -60,7 +59,6 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -106,8 +104,6 @@ DATABASES = {
     }
 }
 
-db_from_env = dj_database_url.config(conn_max_age=600, ssl_require=True)
-DATABASES['default'].update(db_from_env)
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -163,5 +159,9 @@ except ImportError:
 if not DEBUG:
     import django_heroku
     django_heroku.settings(locals())
-    SECURE_SSL_REDIRECT = True
+    MIDDLEWARE += [
+        'whitenoise.middleware.WhiteNoiseMiddleware',
+    ]
+    db_from_env = dj_database_url.config(conn_max_age=600, ssl_require=True)
+    DATABASES['default'].update(db_from_env)
     STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
