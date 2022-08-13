@@ -1,3 +1,4 @@
+from curses.ascii import EM
 from django.views import generic
 from .forms import EmployeeForm
 from .models import Base,Department,Channel,Employee,Post
@@ -56,7 +57,7 @@ class channel_dashboard(LoginRequiredMixin,generic.TemplateView):
             one_week_posts = Post.objects.filter(channel=c,created_at__gt=one_week_ago)
             two_week_posts = Post.objects.filter(channel=c,created_at__gt=two_week_ago,created_at__lte=one_week_ago)
             one_week_posts_count,compare_posts_count,two_week_posts_count = analytics.domain.return_compare_posts_conut(one_week_posts,two_week_posts)
-            dashboard_object = {'base':base , 'channel_name':c.name, 'department':c.department, '   one_week_posts_count': one_week_posts_count,'compare_posts_count': compare_posts_count}
+            dashboard_object = {'base':base , 'channel_name':c.name, 'department':c.department, 'one_week_posts_count': one_week_posts_count,'compare_posts_count': compare_posts_count}
             dashboard.append(dashboard_object)
         context['dashboards'] = dashboard
         return context
@@ -77,9 +78,23 @@ class employee_dashboard(LoginRequiredMixin,generic.TemplateView):
             one_week_posts = Post.objects.filter(employee=e,created_at__gt=one_week_ago)
             two_week_posts = Post.objects.filter(employee=e,created_at__gt=two_week_ago,created_at__lte=one_week_ago)
             one_week_posts_count,compare_posts_count,two_week_posts_count = analytics.domain.return_compare_posts_conut(one_week_posts,two_week_posts)
-            dashboard_object = {'base':base , 'employee_name':e.name, 'department':department, 'one_week_posts_count': one_week_posts_count,'compare_posts_count': compare_posts_count}
+            dashboard_object = {'base':base , 'employee_id':e.pk,'employee_name':e.name, 'department':department, 'one_week_posts_count': one_week_posts_count,'compare_posts_count': compare_posts_count}
             dashboard.append(dashboard_object)
         context['dashboards'] = dashboard
+        return context
+
+class employee_detail_dashboard(LoginRequiredMixin,generic.DetailView):
+    model = Employee
+    context_object_name = "employee_detail"
+    template_name = "analytics/dashboard/employee_detail_dashboard.html"
+    def get_context_data(self,**kwargs):
+        context = super().get_context_data(**kwargs)
+        employee = context.get('object')
+        one_week_posts = Post.objects.filter(employee=employee,created_at__gt=one_week_ago)
+        two_week_posts = Post.objects.filter(employee=employee,created_at__gt=two_week_ago,created_at__lte=one_week_ago)
+        one_week_posts_count,compare_posts_count,two_week_posts_count = analytics.domain.return_compare_posts_conut(one_week_posts,two_week_posts)
+        dashboard_object = {'one_week_posts_count': one_week_posts_count,'compare_posts_count': compare_posts_count}
+        context['dashboard'] = dashboard_object
         return context
 
 #メンバー管理関連

@@ -9,6 +9,7 @@ urlpatterns = [
     path('basedashboard/',views.base_dashboard.as_view(),name='base_dashboard'),
     path('channeldashboard/',views.channel_dashboard.as_view(),name='channel_dashboard'),
     path('employeedashboard/',views.employee_dashboard.as_view(),name='employee_dashboard'),
+    path('employeedashboard/<int:pk>',views.employee_detail_dashboard.as_view(),name='employee_detail_dashboard'),
     #拠点関連
     path('base/index/',views.BaseListView.as_view(),name='base_index'),
     path('base/create/', views.BaseCreateView.as_view(), name='base_create'),
