@@ -1,11 +1,21 @@
-from .models import Post
+from .models import Channel, Post
 from django.conf import settings
 from datetime import datetime
 import requests
 import json
 from django.db.models import Avg
 import time
-#ダッシュボードの共通部分の処理
+#書く部署のチャンネルへの投稿数の配列を返す
+def return_departments_posts_count(departments,employee,month):
+    departments_posts_count = []
+    for department in departments:
+        channels = Channel.objects.filter(department=department)
+        department_posts = Post.objects.filter(employee=employee,channel__in=channels,created_at__gt=month)
+        department_posts_count = len(department_posts)
+        departments_posts_count.append(department_posts_count)
+    return departments_posts_count
+
+#2期間の投稿数の比較
 def return_compare_posts_conut(one_week_posts,two_week_posts):
     one_week_posts_count = len(one_week_posts)
     two_week_posts_count = len(two_week_posts)

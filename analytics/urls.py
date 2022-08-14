@@ -9,6 +9,7 @@ urlpatterns = [
     path('basedashboard/',views.base_dashboard.as_view(),name='base_dashboard'),
     path('channeldashboard/',views.channel_dashboard.as_view(),name='channel_dashboard'),
     path('employeedashboard/',views.employee_dashboard.as_view(),name='employee_dashboard'),
+    path('employeedashboard/<int:pk>',views.employee_detail_dashboard.as_view(),name='employee_detail_dashboard'),
     #拠点関連
     path('base/index/',views.BaseListView.as_view(),name='base_index'),
     path('base/create/', views.BaseCreateView.as_view(), name='base_create'),
@@ -18,6 +19,8 @@ urlpatterns = [
     #メンバー関連
     path('employee/index/',views.EmployeeListView.as_view(),name='employee_index'),
     path('employee/create/', views.EmployeeCreateView.as_view(), name='employee_create'),
+    path('employee/update/<int:pk>/', views.EmployeeUpdateView.as_view(), name='employee_update'),
+    path('employee/delete/<int:pk>/', views.EmployeeDeleteView.as_view(), name='employee_delete'),
     #チャンネル関連
     path('channel/index/',views.ChannelListView.as_view(),name='channel_index'),
     path('channel/create/', views.ChannelCreateView.as_view(), name='channel_create')

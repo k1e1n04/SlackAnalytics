@@ -15,8 +15,7 @@ def get_diff_days_ago(diff_day):
     diff_days_ago = datetime(diff_days_ago.year,diff_days_ago.month,diff_days_ago.day)
     return diff_days_ago
 
-def get_diff_month_ago_unix(diff_month):
+def get_diff_month_ago(diff_month):
     diff_month_ago = now + relativedelta(months=- diff_month)
-    diff_month_ago = datetime(diff_month_ago.year,diff_month_ago.month,1)
-    unix_diff_month_ago = time.mktime(diff_month_ago.timetuple())
-    return unix_diff_month_ago
+    diff_month_ago = datetime(diff_month_ago.year,diff_month_ago.month,diff_month_ago.month)
+    return diff_month_ago

@@ -5,15 +5,26 @@
 
 <table class='table' style="background-color: white;margin-top: 20px;">
     <tr>
-        <th>名前</th><th>拠点</th><th>部署</th><th>登録日</th>
+        <th>名前</th><th>拠点</th><th>部署</th><th>登録日</th><th></th>
     </tr>
     {% for employee in object_list %}
 
     <tr>
-        <td>{{ employee.name }}</td>
+        <td>
+            {% if user.base == employee.base.name or user.base == None or user.base == ""%}
+                <a href="{% url 'analytics:employee_update' employee.pk %}">{{ employee.name }}</a>
+            {% else %}
+                {{ employee.name }}
+            {% endif %}
+        </td>
         <td>{{ employee.base }}</td>
         <td>{{ employee.department }}</td>
         <td>{{ employee.created_at }}</td>
+        <td>
+            {% if user.base == employee.base.name or user.base == None or user.base == ""%}
+                <a href="{% url 'analytics:employee_delete' employee.pk %}">削除</a>
+            {% endif %}
+        </td>
     </tr>
     {% endfor %}
     <div>

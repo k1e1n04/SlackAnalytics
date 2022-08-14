@@ -1,0 +1,59 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <h4>{{employee_detail.name}}のダッシュボード</h4>
+    <table class='table' style="background-color: white;">
+        <tr>
+            <th>メンバー名</th>
+            <th>拠点名</th>
+            <th>部署名</th>
+            <th>今週の投稿数</th>
+        </tr>
+            <tr>
+                <td style="color: #3d9ae5 ;">{{employee_detail.name}}</td>
+                <td>{{employee_detail.base}}</td>
+                <td>{{employee_detail.department}}</td>
+                <td class="number">{{dashboard.one_week_posts_count}}<span>(先週比{{dashboard.compare_posts_count}})</span></td>
+            </tr>
+    </table>
+    <h4>直近1ヶ月の投稿チャンネル比率</h4>
+    <canvas id="myChart"></canvas>
+{% endblock %}
+{% block extrajs %}
+    <script>
+        window.onload = function () {
+            let context = document.querySelector("#myChart").getContext('2d')
+            var department_list = [
+                {% for department in departments %}
+                    {% with index=forloop.counter0 %}
+                        {% if 0 < index%},{% endif %}
+                    {% endwith %}
+                    "{{department.name}}"
+                {% endfor %}
+            ]
+            var post_data = [
+                {% for post_count in departments_post_data %}
+                    {% with index=forloop.counter0 %}
+                        {% if 0 < index%},{% endif %}
+                    {% endwith %}
+                    "{{post_count}}"
+                {% endfor %}
+            ]
+            console.log(department_list)
+            new Chart(context, {
+                type: 'doughnut',
+                data: {
+                    labels: department_list,
+                    datasets: [{
+                    backgroundColor: ["#332288", "#88CCEE", "#44AA99", "#999933","#DDCC77","#CC6677","#882255","#AA4499","#DDDDDD"],
+                    data: post_data
+                    }]
+                },
+                options: {
+                    responsive: true,
+                }
+            });
+        }
+
+    </script>
+{% endblock %}
