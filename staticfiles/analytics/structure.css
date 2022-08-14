@@ -36,7 +36,7 @@ td{
 header{
     position: fixed;
     color: white;
-    height: 100vh;
+    min-height: 100vh;
     width: 20%;
     border-right: 1px solid #e9e9e9;
     background-color: rgb(60, 82, 86);
@@ -97,4 +97,10 @@ button{
 
 .number span{
     font-size: 14px;
+}
+
+canvas{
+    margin: 0 auto;
+    background-color: white;
+    padding: 5%;
 }
