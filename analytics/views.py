@@ -1,4 +1,5 @@
 from curses.ascii import EM
+from email import contentmanager
 from django.views import generic
 from .forms import EmployeeForm
 from .models import Base,Department,Channel,Employee,Post
@@ -93,7 +94,13 @@ class employee_detail_dashboard(LoginRequiredMixin,generic.DetailView):
         one_week_posts = Post.objects.filter(employee=employee,created_at__gt=one_week_ago)
         two_week_posts = Post.objects.filter(employee=employee,created_at__gt=two_week_ago,created_at__lte=one_week_ago)
         one_week_posts_count,compare_posts_count,two_week_posts_count = analytics.domain.return_compare_posts_conut(one_week_posts,two_week_posts)
+
+        departments = Department.objects.filter(base=employee.base)
+        one_month_ago = analytics.process.get_time.get_diff_month_ago(1)
+        departments_posts_count = analytics.domain.return_departments_posts_count(departments,employee,one_month_ago)
         dashboard_object = {'one_week_posts_count': one_week_posts_count,'compare_posts_count': compare_posts_count}
+        context['departments'] = departments
+        context['departments_post_data'] = departments_posts_count
         context['dashboard'] = dashboard_object
         return context
 
@@ -113,7 +120,19 @@ class EmployeeCreateView(LoginRequiredMixin,generic.edit.CreateView):
 
     def form_valid(self, form):
         form.save()
-        return super(EmployeeCreateView, self).form_valid(form)              
+        return super(EmployeeCreateView, self).form_valid(form)
+
+class EmployeeUpdateView(LoginRequiredMixin,generic.UpdateView):
+    model = Employee
+    form_class = EmployeeForm
+    template_name = "analytics/employee_update.html"
+    success_url = reverse_lazy("analytics:employee_index")
+
+class EmployeeDeleteView(LoginRequiredMixin,generic.DeleteView):
+    model = Employee
+    template_name = "analytics/delete.html"
+    success_url = reverse_lazy("analytics:employee_index")
+
 
 #チャンネル管理関連
 class ChannelListView(LoginRequiredMixin,generic.ListView):

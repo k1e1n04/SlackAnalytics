@@ -19,6 +19,8 @@ urlpatterns = [
     #メンバー関連
     path('employee/index/',views.EmployeeListView.as_view(),name='employee_index'),
     path('employee/create/', views.EmployeeCreateView.as_view(), name='employee_create'),
+    path('employee/update/<int:pk>/', views.EmployeeUpdateView.as_view(), name='employee_update'),
+    path('employee/delete/<int:pk>/', views.EmployeeDeleteView.as_view(), name='employee_delete'),
     #チャンネル関連
     path('channel/index/',views.ChannelListView.as_view(),name='channel_index'),
     path('channel/create/', views.ChannelCreateView.as_view(), name='channel_create')
