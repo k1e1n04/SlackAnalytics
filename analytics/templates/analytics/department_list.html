@@ -5,13 +5,26 @@
 
 <table class='table' style="background-color: white;margin-top: 20px;">
     <tr>
-        <th>部署名</th><th>拠点</th>
+        <th>部署名</th><th>拠点</th><th></th>
     </tr>
     {% for department in object_list %}
 
     <tr>
-        <td>{{ department.name }}</td>
+        <td>
+            {% if user.base == department.base.name or user.base == None or user.base == ""%}
+                <a href="{% url 'analytics:department_update' department.pk %}">{{ department.name }}</a>
+            {% else %}
+                {{ department.name }}
+            {% endif %}
+        </td>
         <td>{{ department.base }}</td>
+        <td>
+            {% if user.base == department.base.name or user.base == None or user.base == ""%}
+                <a href="{% url 'analytics:department_delete' department.pk %}">削除</a>
+            {% else %}
+                削除できません
+            {% endif %}
+        </td>
     </tr>
     {% endfor %}
     <div>
