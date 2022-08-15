@@ -5,7 +5,7 @@ import requests
 import json
 from django.db.models import Avg
 import time
-#書く部署のチャンネルへの投稿数の配列を返す
+#各部署のチャンネルへの投稿数の配列を返す
 def return_departments_posts_count(departments,employee,month):
     departments_posts_count = []
     for department in departments:
@@ -23,13 +23,13 @@ def return_compare_posts_conut(one_week_posts,two_week_posts):
     return one_week_posts_count,compare_posts_count,two_week_posts_count
 
 #メンバー登録時の処理↓
-def get_slack_posts(channels,ago,form):
+def get_slack_posts(channels,ago,employee):
     SLACK_URL = settings.SLACK_URL
     TOKEN = settings.TOKEN
     for c in channels:
         payload = {
             "channel" : c.channel_id,
-            "user_id" : form.slack_id,
+            "user_id" : employee.slack_id,
             "oldest" : ago
         }
         headersAuth = {
@@ -38,20 +38,20 @@ def get_slack_posts(channels,ago,form):
         response = requests.get(SLACK_URL, headers=headersAuth, params=payload)
         json_data = response.json()
         msgs = json_data['messages']
-        analytics_preparation(msgs,form,c)
+        analytics_preparation(msgs,employee,c)
         time.sleep(1.2)
 
 
-def analytics_preparation(msgs,form,c):
+def analytics_preparation(msgs,employee,c):
     messages = []
     i=1
     for m in msgs:
-        if m.get('user')==form.slack_id:
+        if m.get('user')==employee.slack_id:
             dt = float(m.get('ts'))
             object = {'id': i,'ts' : datetime.fromtimestamp(dt)}
             messages.append(object)
             i += 1
-    make_post(c,form,messages)
+    make_post(c,employee,messages)
 
 
 def make_post(c,employee,messages):

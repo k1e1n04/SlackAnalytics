@@ -37,7 +37,6 @@ class base_dashboard(LoginRequiredMixin,generic.TemplateView):
 
 class BaseDetailView(LoginRequiredMixin,generic.DeleteView):
     model = Base
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
@@ -124,8 +123,8 @@ class EmployeeCreateView(LoginRequiredMixin,generic.edit.CreateView):
 
 class EmployeeUpdateView(LoginRequiredMixin,generic.UpdateView):
     model = Employee
-    form_class = EmployeeForm
-    template_name = "analytics/employee_update.html"
+    fields = ['name','base','department']
+    template_name = "analytics/form.html"
     success_url = reverse_lazy("analytics:employee_index")
 
 class EmployeeDeleteView(LoginRequiredMixin,generic.DeleteView):
@@ -150,7 +149,7 @@ class ChannelCreateView(LoginRequiredMixin,generic.edit.CreateView):
 
 class ChannelUpdateView(LoginRequiredMixin,generic.UpdateView):
     model = Channel
-    template_name = "analytics/channel_update.html"
+    template_name = "analytics/form.html"
     success_url = reverse_lazy("analytics:channel_index")
     fields = '__all__'
 
@@ -185,7 +184,7 @@ class DepartmentCreateView(LoginRequiredMixin,generic.edit.CreateView):
 
 class DepartmentUpdateView(LoginRequiredMixin,generic.UpdateView):
     model = Department
-    template_name = "analytics/department_update.html"
+    template_name = "analytics/form.html"
     success_url = reverse_lazy("analytics:department_index")
     fields = '__all__'
 
