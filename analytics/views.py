@@ -148,6 +148,17 @@ class ChannelCreateView(LoginRequiredMixin,generic.edit.CreateView):
         context['base_list'] = Base.objects.all()
         return context
 
+class ChannelUpdateView(LoginRequiredMixin,generic.UpdateView):
+    model = Channel
+    template_name = "analytics/channel_update.html"
+    success_url = reverse_lazy("analytics:channel_index")
+    fields = '__all__'
+
+class ChannelDeleteView(LoginRequiredMixin,generic.DeleteView):
+    model = Channel
+    template_name = "analytics/delete.html"
+    success_url = reverse_lazy("analytics:channel_index")
+
 #拠点管理関連
 class BaseListView(LoginRequiredMixin,generic.ListView):
     template_name = "analytics/base_list.html"
@@ -160,7 +171,7 @@ class BaseCreateView(LoginRequiredMixin,generic.edit.CreateView):
     def form_valid(self, form):
         return super(BaseCreateView, self).form_valid(form)
 
-#拠点管理関連
+#部署管理関連
 class DepartmentListView(LoginRequiredMixin,generic.ListView):
     template_name = "analytics/department_list.html"
     model = Department
@@ -171,3 +182,14 @@ class DepartmentCreateView(LoginRequiredMixin,generic.edit.CreateView):
     success_url = reverse_lazy('analytics:department_index')
     def form_valid(self, form):
         return super(DepartmentCreateView, self).form_valid(form)
+
+class DepartmentUpdateView(LoginRequiredMixin,generic.UpdateView):
+    model = Department
+    template_name = "analytics/department_update.html"
+    success_url = reverse_lazy("analytics:department_index")
+    fields = '__all__'
+
+class DepartmentDeleteView(LoginRequiredMixin,generic.DeleteView):
+    model = Department
+    template_name = "analytics/delete.html"
+    success_url = reverse_lazy("analytics:department_index")

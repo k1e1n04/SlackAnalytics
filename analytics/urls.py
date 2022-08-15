@@ -16,6 +16,8 @@ urlpatterns = [
     #部署関連
     path('department/index/',views.DepartmentListView.as_view(),name='department_index'),
     path('department/create/', views.DepartmentCreateView.as_view(), name='department_create'),
+    path('department/update/<int:pk>/', views.DepartmentUpdateView.as_view(), name='department_update'),
+    path('department/delete/<int:pk>/', views.DepartmentDeleteView.as_view(), name='department_delete'),
     #メンバー関連
     path('employee/index/',views.EmployeeListView.as_view(),name='employee_index'),
     path('employee/create/', views.EmployeeCreateView.as_view(), name='employee_create'),
@@ -23,5 +25,7 @@ urlpatterns = [
     path('employee/delete/<int:pk>/', views.EmployeeDeleteView.as_view(), name='employee_delete'),
     #チャンネル関連
     path('channel/index/',views.ChannelListView.as_view(),name='channel_index'),
-    path('channel/create/', views.ChannelCreateView.as_view(), name='channel_create')
+    path('channel/create/', views.ChannelCreateView.as_view(), name='channel_create'),
+    path('channel/update/<int:pk>/', views.ChannelUpdateView.as_view(), name='channel_update'),
+    path('channel/delete/<int:pk>/', views.ChannelDeleteView.as_view(), name='channel_delete')
 ]

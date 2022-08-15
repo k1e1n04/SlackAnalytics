@@ -1,0 +1,16 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<h4>チャンネル情報更新</h4>
+<section class='common-form'>
+    <form method='post'  style="margin-bottom:0;padding-bottom:20px;">
+        <div class="card col-8">
+            <div class="card-body">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type='submit' class='submit btn btn-primary btn-lg btn-block col-4'>更新する</button>
+            </div>
+        </div>
+    </form>
+</section>
+{% endblock %}
