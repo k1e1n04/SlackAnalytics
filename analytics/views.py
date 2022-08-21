@@ -98,6 +98,13 @@ class employee_detail_dashboard(LoginRequiredMixin,generic.DetailView):
         one_month_ago = analytics.process.get_time.get_diff_month_ago(1)
         departments_posts_count = analytics.domain.return_departments_posts_count(departments,employee,one_month_ago)
         dashboard_object = {'one_week_posts_count': one_week_posts_count,'compare_posts_count': compare_posts_count}
+
+        next_monday = analytics.process.get_time.get_next_monday()
+        dateList = analytics.process.get_time.six_month_dateList(next_monday)
+        postList = analytics.domain.getSixWeeksPosts(dateList,employee)
+        
+        context['postList'] = postList
+        context['dateList'] = dateList
         context['departments'] = departments
         context['departments_post_data'] = departments_posts_count
         context['dashboard'] = dashboard_object
