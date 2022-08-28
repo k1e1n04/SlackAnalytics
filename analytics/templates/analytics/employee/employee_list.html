@@ -23,6 +23,8 @@
         <td>
             {% if user.base == employee.base.name or user.base == None or user.base == ""%}
                 <a href="{% url 'analytics:employee_delete' employee.pk %}">削除</a>
+            {% else %}
+                <td>削除できません</td>
             {% endif %}
         </td>
     </tr>

@@ -37,7 +37,6 @@ class base_dashboard(LoginRequiredMixin,generic.TemplateView):
 
 class BaseDetailView(LoginRequiredMixin,generic.DeleteView):
     model = Base
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
@@ -99,6 +98,13 @@ class employee_detail_dashboard(LoginRequiredMixin,generic.DetailView):
         one_month_ago = analytics.process.get_time.get_diff_month_ago(1)
         departments_posts_count = analytics.domain.return_departments_posts_count(departments,employee,one_month_ago)
         dashboard_object = {'one_week_posts_count': one_week_posts_count,'compare_posts_count': compare_posts_count}
+
+        next_monday = analytics.process.get_time.get_next_monday()
+        dateList = analytics.process.get_time.six_month_dateList(next_monday)
+        postList = analytics.domain.getSixWeeksPosts(dateList,employee)
+        
+        context['postList'] = postList
+        context['dateList'] = dateList
         context['departments'] = departments
         context['departments_post_data'] = departments_posts_count
         context['dashboard'] = dashboard_object
@@ -106,11 +112,12 @@ class employee_detail_dashboard(LoginRequiredMixin,generic.DetailView):
 
 #メンバー管理関連
 class EmployeeListView(LoginRequiredMixin,generic.ListView):
-    template_name = "analytics/employee_list.html"
+    template_name = "analytics/employee/employee_list.html"
     model = Employee
 
 class EmployeeCreateView(LoginRequiredMixin,generic.edit.CreateView):
     model = Employee
+    template_name = "analytics/employee/employee_form.html"
     form_class = EmployeeForm
     success_url = reverse_lazy('analytics:employee_index')
     def get_context_data(self, **kwargs):
@@ -124,8 +131,8 @@ class EmployeeCreateView(LoginRequiredMixin,generic.edit.CreateView):
 
 class EmployeeUpdateView(LoginRequiredMixin,generic.UpdateView):
     model = Employee
-    form_class = EmployeeForm
-    template_name = "analytics/employee_update.html"
+    fields = ['name','base','department']
+    template_name = "analytics/update.html"
     success_url = reverse_lazy("analytics:employee_index")
 
 class EmployeeDeleteView(LoginRequiredMixin,generic.DeleteView):
@@ -136,11 +143,12 @@ class EmployeeDeleteView(LoginRequiredMixin,generic.DeleteView):
 
 #チャンネル管理関連
 class ChannelListView(LoginRequiredMixin,generic.ListView):
-    template_name = "analytics/channel_list.html"
+    template_name = "analytics/channel/channel_list.html"
     model = Channel
 
 class ChannelCreateView(LoginRequiredMixin,generic.edit.CreateView):
     model = Channel
+    template_name = "analytics/channel/channel_form.html"
     fields = ['name','base','department','channel_id'] # '__all__'
     success_url = reverse_lazy('analytics:channel_index')
     def get_context_data(self, **kwargs):
@@ -148,26 +156,50 @@ class ChannelCreateView(LoginRequiredMixin,generic.edit.CreateView):
         context['base_list'] = Base.objects.all()
         return context
 
+class ChannelUpdateView(LoginRequiredMixin,generic.UpdateView):
+    model = Channel
+    template_name = "analytics/update.html"
+    success_url = reverse_lazy("analytics:channel_index")
+    fields = '__all__'
+
+class ChannelDeleteView(LoginRequiredMixin,generic.DeleteView):
+    model = Channel
+    template_name = "analytics/delete.html"
+    success_url = reverse_lazy("analytics:channel_index")
+
 #拠点管理関連
 class BaseListView(LoginRequiredMixin,generic.ListView):
-    template_name = "analytics/base_list.html"
+    template_name = "analytics/base/base_list.html"
     model = Base
 
 class BaseCreateView(LoginRequiredMixin,generic.edit.CreateView):
     model = Base
+    template_name = "analytics/base/base_form.html"
     fields = ['name'] # '__all__'
     success_url = reverse_lazy('analytics:base_index')
     def form_valid(self, form):
         return super(BaseCreateView, self).form_valid(form)
 
-#拠点管理関連
+#部署管理関連
 class DepartmentListView(LoginRequiredMixin,generic.ListView):
-    template_name = "analytics/department_list.html"
+    template_name = "analytics/department/department_list.html"
     model = Department
 
 class DepartmentCreateView(LoginRequiredMixin,generic.edit.CreateView):
     model = Department
+    template_name = "analytics/department/department_form.html"
     fields = ['name','base'] # '__all__'
     success_url = reverse_lazy('analytics:department_index')
     def form_valid(self, form):
         return super(DepartmentCreateView, self).form_valid(form)
+
+class DepartmentUpdateView(LoginRequiredMixin,generic.UpdateView):
+    model = Department
+    template_name = "analytics/update.html"
+    success_url = reverse_lazy("analytics:department_index")
+    fields = '__all__'
+
+class DepartmentDeleteView(LoginRequiredMixin,generic.DeleteView):
+    model = Department
+    template_name = "analytics/delete.html"
+    success_url = reverse_lazy("analytics:department_index")

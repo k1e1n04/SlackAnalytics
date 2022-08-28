@@ -99,8 +99,13 @@ button{
     font-size: 14px;
 }
 
-canvas{
+#myChart{
     margin: 0 auto;
     background-color: white;
     padding: 5%;
+}
+
+#ex_chart{
+    width: 100%;
+    background-color: white;
 }

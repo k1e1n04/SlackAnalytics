@@ -1,0 +1,33 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<h4>チャンネル一覧</h4>
+
+<table class='table' style="background-color: white;margin-top: 20px;">
+    <tr>
+        <th>チャンネル名</th><th>拠点</th><th>部署名</th><th></th>
+    </tr>
+    {% for channel in object_list %}
+
+    <tr>
+        <td>
+            {% if user.base == channel.base.name or user.base == None or user.base == ""%}
+                <a href='{% url "analytics:channel_update" channel.pk %}'>{{ channel.name }}</a>
+            {% else %}
+                {{ channel.name }}
+            {% endif %}
+        </td>
+        <td>{{ channel.base }}</td>
+        <td>{{ channel.department }}</td>
+        {% if user.base == employee.base.name or user.base == None or user.is_superuser%}
+            <td><a href="{% url 'analytics:channel_delete' channel.pk%}">削除する</a></td>
+        {% else %}
+            <td>削除できません</td>
+        {% endif %}
+    </tr>
+    {% endfor %}
+    <div>
+      <a href='{% url "analytics:channel_create" %}'>チャンネル登録へ</a>
+    </div>
+</table>
+{% endblock %}
