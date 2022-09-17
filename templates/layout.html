@@ -12,66 +12,68 @@
     <link rel="stylesheet" href="{% static 'analytics/structure.css' %}">
   </head>
   <body>
-    <header>
-      <nav class="nav-bar navbar-expand-lg navbar-light">
-        <h2>SlackAnalytics</h2>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul>
-            <li>
-              <a href='{% url "analytics:base_dashboard" %}'>拠点別ダッシュボード</a>
-            </li>
-            <li>
-              <a href='{% url "analytics:channel_dashboard" %}'>チャンネル別ダッシュボード</a>
-            </li>
-            <li>
-              <a href='{% url "analytics:employee_dashboard" %}'>メンバー別ダッシュボード</a>
-            </li>
-            <li>
-              <a href='{% url "analytics:base_index" %}'>拠点管理</a>
-            </li>
-            <li>
-              <a href='{% url "analytics:department_index" %}'>部署管理</a>
-            </li>
-            <li>
-              <a href='{% url "analytics:channel_index" %}'>チャンネル管理</a>
-            </li>
-            <li>
-              <a href='{% url "analytics:employee_index" %}'>メンバー管理</a>
-            </li>
-            {% if user.is_authenticated %}
-                <li class='nav-time'>
-                  <a href="{% url 'accounts:update' user.pk %}">{{ user.last_name }}{{ user.first_name }}</a>
-                </li>
-                <li>
-                    <a href='{% url "accounts:index" %}' class='user_list'>管理者ユーザー一覧</a>
-                </li>
-                <li>
-                    <a href='{% url "logout" %}' class='logout'>Logout</a>
-                </li>
-            {% else %}
-                <li>
-                  <a href='{% url "login" %}' class='login'>Login</a>
-                </li>
-            {% endif %}
-          </ul>
-        </div>
-      </nav>
-    </header>
-    <div class="container-fluid">
-        {% block content %}
-        {% endblock %}
+    <div id="wrap">
+      <header>
+        <nav class="nav-bar navbar-expand-lg navbar-light">
+          <h2>SlackAnalytics</h2>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul>
+              <li>
+                <a href='{% url "analytics:base_dashboard" %}'>拠点別ダッシュボード</a>
+              </li>
+              <li>
+                <a href='{% url "analytics:channel_dashboard" %}'>チャンネル別ダッシュボード</a>
+              </li>
+              <li>
+                <a href='{% url "analytics:employee_dashboard" %}'>メンバー別ダッシュボード</a>
+              </li>
+              <li>
+                <a href='{% url "analytics:base_index" %}'>拠点管理</a>
+              </li>
+              <li>
+                <a href='{% url "analytics:department_index" %}'>部署管理</a>
+              </li>
+              <li>
+                <a href='{% url "analytics:channel_index" %}'>チャンネル管理</a>
+              </li>
+              <li>
+                <a href='{% url "analytics:employee_index" %}'>メンバー管理</a>
+              </li>
+              {% if user.is_authenticated %}
+                  <li class='nav-time'>
+                    <a href="{% url 'accounts:update' user.pk %}">{{ user.last_name }}{{ user.first_name }}</a>
+                  </li>
+                  <li>
+                      <a href='{% url "accounts:index" %}' class='user_list'>管理者ユーザー一覧</a>
+                  </li>
+                  <li>
+                      <a href='{% url "logout" %}' class='logout'>Logout</a>
+                  </li>
+              {% else %}
+                  <li>
+                    <a href='{% url "login" %}' class='login'>Login</a>
+                  </li>
+              {% endif %}
+            </ul>
+          </div>
+        </nav>
+      </header>
+      <div class="container-fluid">
+          {% block content %}
+          {% endblock %}
+      </div>
+  
+      <!-- Optional JavaScript -->
+      <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+      <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+      {% block extrajs %}{% endblock %}
     </div>
-
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-    {% block extrajs %}{% endblock %}
   </body>
 </html>

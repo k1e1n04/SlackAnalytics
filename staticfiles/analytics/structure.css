@@ -1,6 +1,5 @@
 html,body{
     height: 100%;
-    overflow: scroll;
 }
 
 html{
@@ -11,6 +10,10 @@ body{
     margin: 0;
     text-align: center;
     position: relative;
+}
+
+#wrap{
+    overflow: hidden;
 }
 
 *:focus {
