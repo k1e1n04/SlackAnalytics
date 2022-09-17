@@ -6,11 +6,11 @@ from .models import Base,Department,Channel,Employee,Post
 from django.views import generic
 from django.urls import reverse_lazy
 import analytics.domain
-import analytics.process.get_time
+import analytics.process.gettime as gettime
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-one_week_ago = analytics.process.get_time.get_diff_days_ago(7)
-two_week_ago = analytics.process.get_time.get_diff_days_ago(14)
+one_week_ago = gettime.get_diff_days_ago(7)
+two_week_ago = gettime.get_diff_days_ago(14)
 
 #拠点別ダッシュボード
 class base_dashboard(LoginRequiredMixin,generic.TemplateView):
@@ -59,6 +59,7 @@ class channel_dashboard(LoginRequiredMixin,generic.TemplateView):
             one_week_posts_count,compare_posts_count,two_week_posts_count = analytics.domain.return_compare_posts_conut(one_week_posts,two_week_posts)
             dashboard_object = {'base':base , 'channel_name':c.name, 'department':c.department, 'one_week_posts_count': one_week_posts_count,'compare_posts_count': compare_posts_count}
             dashboard.append(dashboard_object)
+        dashboard.sort(key=lambda x: x['channel_name'])
         context['dashboards'] = dashboard
         return context
 
@@ -80,6 +81,7 @@ class employee_dashboard(LoginRequiredMixin,generic.TemplateView):
             one_week_posts_count,compare_posts_count,two_week_posts_count = analytics.domain.return_compare_posts_conut(one_week_posts,two_week_posts)
             dashboard_object = {'base':base , 'employee_id':e.pk,'employee_name':e.name, 'department':department, 'one_week_posts_count': one_week_posts_count,'compare_posts_count': compare_posts_count}
             dashboard.append(dashboard_object)
+        dashboard.sort(key=lambda x: x['one_week_posts_count'], reverse=True)
         context['dashboards'] = dashboard
         return context
 
@@ -95,16 +97,17 @@ class employee_detail_dashboard(LoginRequiredMixin,generic.DetailView):
         one_week_posts_count,compare_posts_count,two_week_posts_count = analytics.domain.return_compare_posts_conut(one_week_posts,two_week_posts)
 
         departments = Department.objects.filter(base=employee.base)
-        one_month_ago = analytics.process.get_time.get_diff_month_ago(1)
+        one_month_ago = gettime.get_diff_month_ago(1)
         departments_posts_count = analytics.domain.return_departments_posts_count(departments,employee,one_month_ago)
         dashboard_object = {'one_week_posts_count': one_week_posts_count,'compare_posts_count': compare_posts_count}
 
-        next_monday = analytics.process.get_time.get_next_monday()
-        dateList = analytics.process.get_time.six_month_dateList(next_monday)
+        next_monday = gettime.get_next_monday()
+        dateList,str_dateList = gettime.six_month_dateList(next_monday)
         postList = analytics.domain.getSixWeeksPosts(dateList,employee)
         
         context['postList'] = postList
-        context['dateList'] = dateList
+        context['dateList'] = str_dateList
+        print(str_dateList)
         context['departments'] = departments
         context['departments_post_data'] = departments_posts_count
         context['dashboard'] = dashboard_object

@@ -1,33 +1,31 @@
-from datetime import datetime,date,timedelta
 from apscheduler.schedulers.background import BackgroundScheduler
-import analytics.domain
-import time
-from .models import Base,Department,Channel,Employee,Post
-from dateutil.relativedelta import relativedelta
-now = datetime.now()
-
+import analytics.process.createpost as createpost
+from .models import Channel,Employee,Post
+import analytics.process.gettime as gettime
 
 def periodic_execution():
-    one_day_ago = now + timedelta(days=-1)
-    one_day_ago = datetime(one_day_ago.year,one_day_ago.month,one_day_ago.day)
-    unix_one_day_ago = time.mktime(one_day_ago.timetuple())
+    diff_day=1
+    unix_one_day_ago = gettime.get_diff_days_ago_unix(diff_day)
     employees = Employee.objects.all()
-    for e in employees:
-        employee_base = e.base
+    for employee in employees:
+        employee_base = employee.base
         #所属拠点のチャンネルを全て取得
         channels = Channel.objects.filter(base=employee_base)
-        analytics.domain.get_slack_posts(channels,unix_one_day_ago,e)
+        for channel in channels:
+            slack_res = createpost.get_slack_posts(channel,unix_one_day_ago,employee)
+            messages = createpost.analytics_preparation(slack_res,employee)
+            createpost.make_post(channel,employee,messages)
 
 def periodic_delete_execution():
-    half_year_ago = now + relativedelta(months=-7)
-    half_year_ago =datetime(half_year_ago.year,half_year_ago.month,1)
+    diff_month = 7
+    half_year_ago = gettime.get_diff_month_ago(diff_month)
     posts = Post.objects.filter(created_at__lt=half_year_ago)
     posts.delete()
 
 
 def start():
     scheduler = BackgroundScheduler()
-    scheduler.add_job(periodic_execution,'interval',minutes=15)
+    scheduler.add_job(periodic_execution,'interval',minutes=1)
     scheduler.start()
 
 def start_delete():
