@@ -18,6 +18,8 @@
     </table>
     <h4>直近1ヶ月の投稿チャンネル比率</h4>
     <canvas id="myChart"></canvas>
+    <h4>半年間の週当たり投稿数推移</h4>
+    <canvas id="ex_chart"></canvas>
 {% endblock %}
 {% block extrajs %}
     <script>
@@ -39,7 +41,6 @@
                     "{{post_count}}"
                 {% endfor %}
             ]
-            console.log(department_list)
             new Chart(context, {
                 type: 'doughnut',
                 data: {
@@ -52,6 +53,41 @@
                 options: {
                     responsive: true,
                 }
+            });
+            var dateList = [
+                {% for date in dateList %}
+                    {% with index=forloop.counter0 %}
+                        {% if 0 < index%},{% endif %}
+                    {% endwith %}
+                    "{{date}}"
+                {% endfor %}
+            ]
+            var postList = [
+                {% for post in postList %}
+                    {% with index=forloop.counter0 %}
+                        {% if 0 < index%},{% endif %}
+                    {% endwith %}
+                    "{{post}}"
+                {% endfor %}
+            ]
+
+            var ctx = document.getElementById('ex_chart');
+
+            var data = {
+                labels: dateList,
+                datasets: [{
+                    label: '週当たりの投稿数',
+                    data: postList,
+                    borderColor: 'rgb(60, 82, 86)'
+                }]
+            };
+
+            var options = {};
+
+            var ex_chart = new Chart(ctx, {
+                type: 'line',
+                data: data,
+                options: options
             });
         }
 
