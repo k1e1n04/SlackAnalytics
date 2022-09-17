@@ -29,9 +29,14 @@ def get_next_monday():
 
 def six_month_dateList(next_monday):
     dateList=[]
-    for i in range(24):
-        diff_days_ago = next_monday  + timedelta(days= - i*7)
+    str_dateList=[]
+    six_month_as_week = 24
+    for week in range(six_month_as_week):
+        diff_days_ago = next_monday  + timedelta(days= - week*7)
         diff_days_ago = datetime(diff_days_ago.year,diff_days_ago.month,diff_days_ago.day)
+        str_diff_days_ago = "{}/{}/{}".format(diff_days_ago.year,diff_days_ago.month,diff_days_ago.day)
         dateList.append(diff_days_ago)
+        str_dateList.append(str_diff_days_ago)
     dateList.reverse()
-    return dateList
+    str_dateList.reverse()
+    return dateList,str_dateList
