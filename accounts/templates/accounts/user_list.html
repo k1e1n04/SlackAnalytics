@@ -3,6 +3,12 @@
 {% block content %}
 
 <h4>管理者ユーザー一覧</h4>
+<form class="search-form" method="get">
+    <input class="form-control" type="search" value="{{ request.GET.query }}" 
+           name="query" type="text" 
+           placeholder=" 拠点名or苗字or名前">
+    <button class='submit btn btn-primary btn-lg btn-block'>検索</button>
+</form>
 
 <table class='table' style="background-color: white;margin-top: 20px;">
     <tr>

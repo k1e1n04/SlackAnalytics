@@ -3,7 +3,19 @@ from django.contrib.auth.models import PermissionsMixin, UserManager
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
+from django.db.models import Q
   
+class  UserModelQuerySet(models.QuerySet):
+    def user_search(self,query=None):
+        qs = self
+        if query is not None:
+            or_lookup = (
+                Q(first_name__icontains=query)|
+                Q(last_name__icontains=query)|
+                Q(base__icontains=query)
+            )
+            qs = qs.filter(or_lookup).distinct()
+        return qs
 
 class CustomUserManager(UserManager):
     use_in_migrations = True
@@ -28,6 +40,11 @@ class CustomUserManager(UserManager):
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Superuser must have is_superuser=True.')
         return self._create_user(password, **extra_fields)
+    
+    def get_queryset(self):
+        return UserModelQuerySet(self.model,using=self._db)
+    def user_search(self,query=None):
+        return self.get_queryset().user_search(query=query)
   
 class User(AbstractBaseUser, PermissionsMixin):
 

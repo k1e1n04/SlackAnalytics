@@ -145,8 +145,24 @@ button{
 
 /* 折れ線グラフ */
 #ex_chart{
-    width: 100%;
+    margin: 0 auto;
+    width: 90%;
     background-color: white;
+}
+
+.search-form{
+    margin-bottom: 20px;
+}
+
+.search-form input[type='search']{
+    display: inline-block;
+    width: 250px;
+}
+
+.search-form button{
+    display: inline-block;
+    font-size: 14px;
+    width: 70px;
 }
 
 @media screen and (max-width:991px){
@@ -155,6 +171,10 @@ button{
         width: 100%;
         min-height: 20px;
         height: 50px;
+    }
+
+    button[type='submit']{
+        font-size: 14px;
     }
 
     header h2{
@@ -194,8 +214,17 @@ button{
     }
     
     table{
+        font-size: 12px;
         margin: 0 5%;
         width: 90%!important;
+    }
+
+    .number{
+        font-size: 14px;
+    }
+
+    .number span{
+        font-size: 10px;
     }
 
     .card{

@@ -8,3 +8,4 @@ class EmployeeForm(forms.ModelForm):
         fields = ('name', 'base', 'department','slack_id')
     
     field_order= ('name', 'base', 'department','slack_id')
+
