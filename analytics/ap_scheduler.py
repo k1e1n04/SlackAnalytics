@@ -25,7 +25,7 @@ def periodic_delete_execution():
 
 def start():
     scheduler = BackgroundScheduler()
-    scheduler.add_job(periodic_execution,'interval',minutes=1)
+    scheduler.add_job(periodic_execution,'interval',minutes=30)
     scheduler.start()
 
 def start_delete():

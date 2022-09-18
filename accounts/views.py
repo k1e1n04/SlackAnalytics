@@ -27,7 +27,13 @@ class SignUpView(LoginRequiredMixin,generic.CreateView):
 
 class UserList(LoginRequiredMixin,generic.ListView):
     template_name = "accounts/user_list.html"
-    model = User
+    def get_queryset(self):
+        try:
+            query= self.request.GET.get('query')
+        except:
+            query = None
+        users = User.objects.user_search(query=query)
+        return users
 
 class UserDeleteView(OnlyYouMixin,generic.DeleteView):
     model = User

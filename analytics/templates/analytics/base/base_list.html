@@ -2,7 +2,12 @@
 
 {% block content %}
 <h4>拠点一覧</h4>
-
+<form class="search-form" method="get">
+    <input class="form-control" type="search" value="{{ request.GET.query }}" 
+           name="query" type="text" 
+           placeholder=" 拠点名">
+    <button class='submit btn btn-primary btn-lg btn-block'>検索</button>
+</form>
 <table class='table' style="background-color: white;margin-top: 20px;">
     <tr>
         <th>拠点名</th>
