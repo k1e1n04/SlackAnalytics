@@ -18,7 +18,11 @@ class base_dashboard(LoginRequiredMixin,generic.TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         dashboard = []
-        bases = Base.objects.all()
+        try:
+            query= self.request.GET.get('query')
+        except:
+            query = None
+        bases = Base.objects.base_search(query=query)
         for b in bases:
             member_count = len(Employee.objects.filter(base=b))
             if member_count == 0:
@@ -47,7 +51,11 @@ class channel_dashboard(LoginRequiredMixin,generic.TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         dashboard = []
-        channels = Channel.objects.all()
+        try:
+            query= self.request.GET.get('query')
+        except:
+            query = None
+        channels = Channel.objects.search(query=query)
         for c in channels:
             total_posts = Post.objects.filter(channel=c)
             if total_posts == 0:
@@ -69,7 +77,11 @@ class employee_dashboard(LoginRequiredMixin,generic.TemplateView):
     def get_context_data(self,**kwargs):
         context = super().get_context_data(**kwargs)
         dashboard = []
-        employees = Employee.objects.all()
+        try:
+            query= self.request.GET.get('query')
+        except:
+            query = None
+        employees = Employee.objects.search(query=query)
         for e in employees:
             total_posts = Post.objects.filter(employee=e)
             if total_posts == 0:
@@ -116,7 +128,13 @@ class employee_detail_dashboard(LoginRequiredMixin,generic.DetailView):
 #メンバー管理関連
 class EmployeeListView(LoginRequiredMixin,generic.ListView):
     template_name = "analytics/employee/employee_list.html"
-    model = Employee
+    def get_queryset(self):
+        try:
+            query= self.request.GET.get('query')
+        except:
+            query = None
+        employees = Employee.objects.search(query=query)
+        return employees
 
 class EmployeeCreateView(LoginRequiredMixin,generic.edit.CreateView):
     model = Employee
@@ -147,7 +165,13 @@ class EmployeeDeleteView(LoginRequiredMixin,generic.DeleteView):
 #チャンネル管理関連
 class ChannelListView(LoginRequiredMixin,generic.ListView):
     template_name = "analytics/channel/channel_list.html"
-    model = Channel
+    def get_queryset(self):
+        try:
+            query= self.request.GET.get('query')
+        except:
+            query = None
+        channels = Channel.objects.search(query=query)
+        return channels
 
 class ChannelCreateView(LoginRequiredMixin,generic.edit.CreateView):
     model = Channel
@@ -173,7 +197,13 @@ class ChannelDeleteView(LoginRequiredMixin,generic.DeleteView):
 #拠点管理関連
 class BaseListView(LoginRequiredMixin,generic.ListView):
     template_name = "analytics/base/base_list.html"
-    model = Base
+    def get_queryset(self):
+        try:
+            query= self.request.GET.get('query')
+        except:
+            query = None
+        bases = Base.objects.base_search(query=query)
+        return bases
 
 class BaseCreateView(LoginRequiredMixin,generic.edit.CreateView):
     model = Base
@@ -186,7 +216,13 @@ class BaseCreateView(LoginRequiredMixin,generic.edit.CreateView):
 #部署管理関連
 class DepartmentListView(LoginRequiredMixin,generic.ListView):
     template_name = "analytics/department/department_list.html"
-    model = Department
+    def get_queryset(self):
+        try:
+            query= self.request.GET.get('query')
+        except:
+            query = None
+        departments = Department.objects.dp_search(query=query)
+        return departments
 
 class DepartmentCreateView(LoginRequiredMixin,generic.edit.CreateView):
     model = Department
