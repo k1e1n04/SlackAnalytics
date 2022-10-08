@@ -72,11 +72,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name_plural = _('users')
   
     def get_full_name(self):
-        """Return the first_name plus the last_name, with a space in
-        between."""
+        """管理者ユーザーの苗字と名前をつなげフルネームを返す"""
         full_name = '%s %s' % (self.first_name, self.last_name)
         return full_name.strip()
   
     def get_short_name(self):
-        """Return the short name for the user."""
+        """管理者ユーザーの名前を返す"""
         return self.first_name

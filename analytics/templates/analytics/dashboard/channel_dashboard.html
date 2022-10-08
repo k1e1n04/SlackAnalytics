@@ -15,12 +15,12 @@
             <th>部署名</th>
             <th>今週の投稿数</th>
         </tr>
-        {% for dashboard in dashboards %}
+        {% for channel in object_list %}
             <tr>
-                <td style="color: #3d9ae5 ;">{{dashboard.channel_name}}</td>
-                <td>{{dashboard.base}}</td>
-                <td>{{dashboard.department}}</td>
-                <td class="number">{{dashboard.one_week_posts_count}}<span>(先週比{{dashboard.compare_posts_count}})</span></td>
+                <td style="color: #3d9ae5 ;">{{channel.name}}</td>
+                <td>{{channel.base}}</td>
+                <td>{{channel.department}}</td>
+                <td class="number">{{channel.one_week_posts_count}}<span>(先週比{{channel.compare_posts_count}})</span></td>
             </tr>
         {% endfor %}
     </table>

@@ -16,13 +16,13 @@
             <th>今週の投稿数</th>
             <th>今週のメンバー<br>平均投稿数</th>
         </tr>
-        {% for dashboard in dashboards %}
+        {% for base in object_list %}
             <tr>
-                <td style="color: #3d9ae5 ;">{{dashboard.base}}</td>
-                <td>{{dashboard.channel_count}}</td>
-                <td>{{dashboard.member_count}}</td>
-                <td class="number">{{dashboard.one_week_posts_count}}<span>(先週比{{dashboard.compare_posts_count}})</span></td>
-                <td class="number">{{dashboard.per_posts}}<span>(先週比{{dashboard.compare_per_posts}})</span></td>
+                <td style="color: #3d9ae5 ;"><a href="{% url 'analytics:base_detail_dashboard' base.pk %}">{{base.name}}</a></td>
+                <td>{{base.channel_count}}</td>
+                <td>{{base.member_count}}</td>
+                <td class="number">{{base.one_week_posts_count}}<span>(先週比{{base.compare_posts_count}})</span></td>
+                <td class="number">{{base.per_posts}}<span>(先週比{{base.compare_per_posts}})</span></td>
             </tr>
         {% endfor %}
     </table>

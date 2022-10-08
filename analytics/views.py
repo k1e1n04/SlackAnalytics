@@ -1,8 +1,6 @@
-from curses.ascii import EM
-from email import contentmanager
 from django.views import generic
 from .forms import EmployeeForm
-from .models import Base,Department,Channel,Employee,Post
+from .models import Base,Department,Channel,Employee
 from django.views import generic
 from django.urls import reverse_lazy
 import analytics.domain
@@ -13,120 +11,92 @@ one_week_ago = gettime.get_diff_days_ago(7)
 two_week_ago = gettime.get_diff_days_ago(14)
 
 #拠点別ダッシュボード
-class base_dashboard(LoginRequiredMixin,generic.TemplateView):
+class BaseDashboard(LoginRequiredMixin,generic.ListView):
+    """拠点一覧のダッシュボード\n
+    拠点名、チャンネル数、メンバー数、直近7日間の投稿数、直近7日間のメンバーあたりの平均投稿数を表示\n
+    拠点名で検索し絞り込むことができる
+    """
     template_name = "analytics/dashboard/base_dashboard.html"
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        dashboard = []
+    def get_queryset(self):
         try:
             query= self.request.GET.get('query')
         except:
             query = None
         bases = Base.objects.base_search(query=query)
-        for b in bases:
-            member_count = len(Employee.objects.filter(base=b))
-            if member_count == 0:
-                continue
-            one_week_posts = Post.objects.filter(base=b,created_at__gt=one_week_ago)
-            two_week_posts = Post.objects.filter(base=b,created_at__gt=two_week_ago,created_at__lte=one_week_ago)
-            one_week_posts_count,compare_posts_count,two_week_posts_count = analytics.domain.return_compare_posts_conut(one_week_posts,two_week_posts)
-            per_posts = round(one_week_posts_count/member_count)
-            compare_per_posts = round(per_posts-(two_week_posts_count/member_count))
-            channel_count = len(Channel.objects.filter(base=b))
-            total_posts = Post.objects.filter(base=b)
-            dashboard_object = {'base':b.name , 'member_count':member_count, 'channel_count':channel_count, 'one_week_posts_count': one_week_posts_count, 'compare_posts_count': compare_posts_count,'per_posts':per_posts,'compare_per_posts':compare_per_posts}
-            dashboard.append(dashboard_object)
-        context['dashboards'] = dashboard
-        return context
+        return bases
 
-class BaseDetailView(LoginRequiredMixin,generic.DeleteView):
+# 拠点の詳細ダッシュボード
+class BaseDetailDashboard(LoginRequiredMixin,generic.DetailView):
+    """任意の拠点の詳細ダッシュボード\n
+    拠点名、チャンネル数、メンバー数、直近7日間の投稿数(先週比)、直近7日間のメンバーあたりの平均投稿数(先週比)
+    に加え、直近30日間の部署別投稿比率の円グラフ、直近半年間の拠点の週あたり投稿数の推移の折れ線グラフを表示
+    """
     model = Base
+    context_object_name = "base_detail"
+    template_name = "analytics/dashboard/base_detail_dashboard.html"
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+        context= super().get_context_data(**kwargs)
+        base = context.get('object')
+        next_monday = gettime.get_next_monday()
+        dateList,str_dateList = gettime.six_month_dateList(next_monday)
+        post_date_list = analytics.domain.getGoogleChartPosts(dateList,str_dateList,base=base)
+        context['postDateList'] = post_date_list
+        return context
 
 
 #チャンネル別ダッシュボード
-class channel_dashboard(LoginRequiredMixin,generic.TemplateView):
+class ChannelDashboard(LoginRequiredMixin,generic.ListView):
+    """Slackのチャンネル一覧のダッシュボード\n
+    チャンネル数、拠点名、部署名、直近7日間の投稿数(先週比)を表示\n
+    チャンネル名、拠点名、部署名で絞り込むことができる
+    """
     template_name = 'analytics/dashboard/channel_dashboard.html'
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        dashboard = []
+    def get_queryset(self):
         try:
             query= self.request.GET.get('query')
         except:
             query = None
-        channels = Channel.objects.search(query=query)
-        for c in channels:
-            total_posts = Post.objects.filter(channel=c)
-            if total_posts == 0:
-                continue
-            base = c.base
-            department = c.department
-            one_week_posts = Post.objects.filter(channel=c,created_at__gt=one_week_ago)
-            two_week_posts = Post.objects.filter(channel=c,created_at__gt=two_week_ago,created_at__lte=one_week_ago)
-            one_week_posts_count,compare_posts_count,two_week_posts_count = analytics.domain.return_compare_posts_conut(one_week_posts,two_week_posts)
-            dashboard_object = {'base':base , 'channel_name':c.name, 'department':c.department, 'one_week_posts_count': one_week_posts_count,'compare_posts_count': compare_posts_count}
-            dashboard.append(dashboard_object)
-        dashboard.sort(key=lambda x: x['channel_name'])
-        context['dashboards'] = dashboard
-        return context
+        channels = Channel.objects.search(query=query).order_by("name")
+        return channels
 
 #メンバー別ダッシュボード
-class employee_dashboard(LoginRequiredMixin,generic.TemplateView):
+class EmployeeDashboard(LoginRequiredMixin,generic.ListView):
+    """メンバー一覧のダッシュボード\n
+    メンバー名、拠点名、部署名、直近7日間の投稿数(先週比)を表示\n
+    メンバー名、拠点名、部署名で絞り込むことができる
+    """
     template_name = "analytics/dashboard/employee_dashboard.html"
-    def get_context_data(self,**kwargs):
-        context = super().get_context_data(**kwargs)
-        dashboard = []
+    def get_queryset(self):
         try:
             query= self.request.GET.get('query')
         except:
             query = None
         employees = Employee.objects.search(query=query)
-        for e in employees:
-            total_posts = Post.objects.filter(employee=e)
-            if total_posts == 0:
-                continue
-            base = e.base
-            department = e.department
-            one_week_posts = Post.objects.filter(employee=e,created_at__gt=one_week_ago)
-            two_week_posts = Post.objects.filter(employee=e,created_at__gt=two_week_ago,created_at__lte=one_week_ago)
-            one_week_posts_count,compare_posts_count,two_week_posts_count = analytics.domain.return_compare_posts_conut(one_week_posts,two_week_posts)
-            dashboard_object = {'base':base , 'employee_id':e.pk,'employee_name':e.name, 'department':department, 'one_week_posts_count': one_week_posts_count,'compare_posts_count': compare_posts_count}
-            dashboard.append(dashboard_object)
-        dashboard.sort(key=lambda x: x['one_week_posts_count'], reverse=True)
-        context['dashboards'] = dashboard
-        return context
+        return employees
 
-class employee_detail_dashboard(LoginRequiredMixin,generic.DetailView):
+class EmployeeDetailDashboard(LoginRequiredMixin,generic.DetailView):
+    """任意のメンバーの詳細ダッシュボード\n
+    メンバー名、拠点名、部署名、直近7日間の投稿数(先週比)
+    に加え、直近30日間の部署別投稿比率の円グラフ、直近半年間の拠点の週あたり投稿数の推移の折れ線グラフを表示
+    """
     model = Employee
     context_object_name = "employee_detail"
     template_name = "analytics/dashboard/employee_detail_dashboard.html"
     def get_context_data(self,**kwargs):
         context = super().get_context_data(**kwargs)
         employee = context.get('object')
-        one_week_posts = Post.objects.filter(employee=employee,created_at__gt=one_week_ago)
-        two_week_posts = Post.objects.filter(employee=employee,created_at__gt=two_week_ago,created_at__lte=one_week_ago)
-        one_week_posts_count,compare_posts_count,two_week_posts_count = analytics.domain.return_compare_posts_conut(one_week_posts,two_week_posts)
-
-        departments = Department.objects.filter(base=employee.base)
-        one_month_ago = gettime.get_diff_month_ago(1)
-        departments_posts_count = analytics.domain.return_departments_posts_count(departments,employee,one_month_ago)
-        dashboard_object = {'one_week_posts_count': one_week_posts_count,'compare_posts_count': compare_posts_count}
-
         next_monday = gettime.get_next_monday()
         dateList,str_dateList = gettime.six_month_dateList(next_monday)
-        postList = analytics.domain.getSixWeeksPosts(dateList,employee)
-        
-        context['postList'] = postList
-        context['dateList'] = str_dateList
-        print(str_dateList)
-        context['departments'] = departments
-        context['departments_post_data'] = departments_posts_count
-        context['dashboard'] = dashboard_object
+        post_date_list = analytics.domain.getGoogleChartPosts(dateList,str_dateList,employee=employee)
+        context['postDateList'] = post_date_list
         return context
 
 #メンバー管理関連
 class EmployeeListView(LoginRequiredMixin,generic.ListView):
+    """メンバー管理画面\n
+    メンバーを新たに登録する画面、任意のメンバーの情報更新や削除画面に遷移できる\n
+    メンバー名、拠点名、部署名で絞り込むことができる
+    """
     template_name = "analytics/employee/employee_list.html"
     def get_queryset(self):
         try:
@@ -137,6 +107,11 @@ class EmployeeListView(LoginRequiredMixin,generic.ListView):
         return employees
 
 class EmployeeCreateView(LoginRequiredMixin,generic.edit.CreateView):
+    """メンバー登録画面\n
+    名前、拠点、部署名を登録し、メンバーを新たに作成する\n
+    全ての項目の入力は必須\n
+    拠点を選択すると部署は自動で絞り込まれる
+    """
     model = Employee
     template_name = "analytics/employee/employee_form.html"
     form_class = EmployeeForm
@@ -151,12 +126,21 @@ class EmployeeCreateView(LoginRequiredMixin,generic.edit.CreateView):
         return super(EmployeeCreateView, self).form_valid(form)
 
 class EmployeeUpdateView(LoginRequiredMixin,generic.UpdateView):
+    """メンバー情報更新画面\n
+    名前、拠点、部署名を更新することができる\n
+    全ての項目の入力は必須\n
+    拠点を選択すると部署は自動で絞り込まれる
+    """
     model = Employee
     fields = ['name','base','department']
     template_name = "analytics/update.html"
     success_url = reverse_lazy("analytics:employee_index")
 
 class EmployeeDeleteView(LoginRequiredMixin,generic.DeleteView):
+    """メンバー削除画面\n
+    メンバー管理の一覧画面から削除ボタンを押しすと遷移できる\n
+    本当に削除して良いかの確認を行う
+    """
     model = Employee
     template_name = "analytics/delete.html"
     success_url = reverse_lazy("analytics:employee_index")
@@ -164,16 +148,25 @@ class EmployeeDeleteView(LoginRequiredMixin,generic.DeleteView):
 
 #チャンネル管理関連
 class ChannelListView(LoginRequiredMixin,generic.ListView):
+    """チャンネル管理画面\n
+    Slackのチャンネルを新たに登録する画面、任意のチャンネルの情報更新や削除画面に遷移できる\n
+    チャンネル名、拠点名、部署名で絞り込むことができる
+    """
     template_name = "analytics/channel/channel_list.html"
     def get_queryset(self):
         try:
             query= self.request.GET.get('query')
         except:
             query = None
-        channels = Channel.objects.search(query=query)
+        channels = Channel.objects.order_by("name").search(query=query)
         return channels
 
 class ChannelCreateView(LoginRequiredMixin,generic.edit.CreateView):
+    """チャンネル登録画面\n
+    チャンネル名、拠点名、部署名を更新することができる\n
+    全ての項目の入力は必須\n
+    拠点を選択すると部署は自動で絞り込まれる
+    """
     model = Channel
     template_name = "analytics/channel/channel_form.html"
     fields = ['name','base','department','channel_id'] # '__all__'
@@ -184,18 +177,31 @@ class ChannelCreateView(LoginRequiredMixin,generic.edit.CreateView):
         return context
 
 class ChannelUpdateView(LoginRequiredMixin,generic.UpdateView):
+    """チャンネル情報更新画面\n
+    チャンネル名、拠点、部署、SlackチャンネルIDを登録し、チャンネルを新たに作成する\n
+    全ての項目の入力は必須\n
+    拠点を選択すると部署は自動で絞り込まれる
+    """
     model = Channel
     template_name = "analytics/update.html"
     success_url = reverse_lazy("analytics:channel_index")
     fields = '__all__'
 
 class ChannelDeleteView(LoginRequiredMixin,generic.DeleteView):
+    """チャンネル削除画面\n
+    チャンネル管理の一覧画面から削除ボタンを押しすと遷移できる\n
+    本当に削除して良いかの確認を行う
+    """
     model = Channel
     template_name = "analytics/delete.html"
     success_url = reverse_lazy("analytics:channel_index")
 
 #拠点管理関連
 class BaseListView(LoginRequiredMixin,generic.ListView):
+    """拠点管理画面\n
+    拠点を新たに登録する画面、任意の拠点の情報更新や削除画面に遷移できる\n
+    拠点名で絞り込むことができる
+    """
     template_name = "analytics/base/base_list.html"
     def get_queryset(self):
         try:
@@ -205,16 +211,25 @@ class BaseListView(LoginRequiredMixin,generic.ListView):
         bases = Base.objects.base_search(query=query)
         return bases
 
+
 class BaseCreateView(LoginRequiredMixin,generic.edit.CreateView):
+    """拠点登録画面\n
+    拠点名を登録し、拠点を新たに作成する\n
+    全ての項目の入力は必須
+    """
     model = Base
     template_name = "analytics/base/base_form.html"
-    fields = ['name'] # '__all__'
+    fields = ['name']
     success_url = reverse_lazy('analytics:base_index')
     def form_valid(self, form):
         return super(BaseCreateView, self).form_valid(form)
 
 #部署管理関連
 class DepartmentListView(LoginRequiredMixin,generic.ListView):
+    """部署管理画面\n
+    部署を新たに登録する画面、任意の部署の情報更新や削除画面に遷移できる\n
+    拠点名、部署名で絞り込むことができる
+    """
     template_name = "analytics/department/department_list.html"
     def get_queryset(self):
         try:
@@ -225,6 +240,10 @@ class DepartmentListView(LoginRequiredMixin,generic.ListView):
         return departments
 
 class DepartmentCreateView(LoginRequiredMixin,generic.edit.CreateView):
+    """部署登録画面\n
+    部署名、拠点を登録し、部署を新たに作成する\n
+    全ての項目の入力は必須
+    """
     model = Department
     template_name = "analytics/department/department_form.html"
     fields = ['name','base'] # '__all__'
@@ -233,12 +252,20 @@ class DepartmentCreateView(LoginRequiredMixin,generic.edit.CreateView):
         return super(DepartmentCreateView, self).form_valid(form)
 
 class DepartmentUpdateView(LoginRequiredMixin,generic.UpdateView):
+    """部署情報更新画面\n
+    部署名、拠点名を更新することができる\n
+    全ての項目の入力は必須
+    """
     model = Department
     template_name = "analytics/update.html"
     success_url = reverse_lazy("analytics:department_index")
     fields = '__all__'
 
 class DepartmentDeleteView(LoginRequiredMixin,generic.DeleteView):
+    """部署削除画面\n
+    部署管理の一覧画面から削除ボタンを押しすと遷移できる\n
+    本当に削除して良いかの確認を行う
+    """
     model = Department
     template_name = "analytics/delete.html"
     success_url = reverse_lazy("analytics:department_index")
