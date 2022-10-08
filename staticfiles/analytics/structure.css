@@ -143,11 +143,14 @@ button{
     max-width: 90%;
 }
 
-/* 折れ線グラフ */
-#ex_chart{
+.chart{
+    max-width: 90%;
     margin: 0 auto;
+}
+
+/* 折れ線グラフ */
+#line_chart{
     width: 90%;
-    background-color: white;
 }
 
 .search-form{
