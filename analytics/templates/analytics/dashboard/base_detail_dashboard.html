@@ -1,19 +1,21 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-    <h4>{{employee_detail.name}}のダッシュボード</h4>
+    <h4>{{base_detail.name}}のダッシュボード</h4>
     <table class='table' style="background-color: white;">
         <tr>
-            <th>メンバー名</th>
             <th>拠点名</th>
-            <th>部署名</th>
+            <th>チャンネル数</th>
+            <th>メンバー数</th>
             <th>今週の投稿数</th>
+            <th>今週のメンバー<br>平均投稿数</th>
         </tr>
             <tr>
-                <td style="color: #3d9ae5 ;">{{employee_detail.name}}</td>
-                <td>{{employee_detail.base}}</td>
-                <td>{{employee_detail.department}}</td>
-                <td class="number">{{employee_detail.one_week_posts_count}}<span>(先週比{{employee_detail.compare_posts_count}})</span></td>
+                <td style="color: #3d9ae5 ;">{{base_detail.name}}</td>
+                <td>{{base_detail.channel_count}}</td>
+                <td>{{base_detail.member_count}}</td>
+                <td class="number">{{base_detail.one_week_posts_count}}<span>(先週比{{base_detail.compare_posts_count}})</span></td>
+                <td class="number">{{base_detail.per_posts}}<span>(先週比{{base_detail.compare_per_posts}})</span></td>
             </tr>
     </table>
     <h4>直近1ヶ月の投稿チャンネル比率</h4>
@@ -22,10 +24,7 @@
     <div class="chart" id="line_chart"></div>
 {% endblock %}
 {% block extrajs %}
-
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script>
-       
         // Load the Visualization API and the corechart package.
         google.charts.load('current', {'packages':['corechart']});
 
@@ -54,7 +53,7 @@
         }
         function drawCircleChart() {
             {% autoescape off %}
-                var posts_count_department = {{employee_detail.posts_count_per_department}};
+                var posts_count_department = {{base_detail.posts_count_per_department}};
             {% endautoescape %}
             // Create the data table.
             var data = new google.visualization.DataTable();
@@ -71,5 +70,6 @@
             var chart = new google.visualization.PieChart(document.getElementById('circle_chart'));
             chart.draw(data, options);
         }
+
     </script>
 {% endblock %}
