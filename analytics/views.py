@@ -23,9 +23,15 @@ class SummaryView(LoginRequiredMixin,generic.TemplateView):
         base = Base.objects.filter(name=self.request.user.base).first()
         next_monday = gettime.get_next_monday()
         dateList,str_dateList = gettime.six_month_dateList(next_monday)
-        post_date_list = analytics.domain.getGoogleChartPosts(dateList,str_dateList,base=base)
-        context['postDateList'] = post_date_list
+        if base is None:
+            post_date_list = analytics.domain.getGoogleChartPosts(dateList,str_dateList,base=base)
+            channel_count = len(Department.objects.all())
+            member_count = len(Employee.objects.all())
+            base = {"name":"全拠点","channel_count":channel_count,"member_count":member_count,}
+        else:
+            post_date_list = analytics.domain.getGoogleChartPosts(dateList,str_dateList,base=base)
         context['base'] = base
+        context['postDateList'] = post_date_list
         return context
 
 #拠点別ダッシュボード
