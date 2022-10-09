@@ -18,11 +18,11 @@ def getGoogleChartPosts(dateList,str_dateList,employee=None,base=None):
     for date_index in range(len(dateList)-1):
         if employee is not None:
             posts_count = len(Post.objects.filter(employee=employee,created_at__gt=dateList[date_index],created_at__lte=dateList[date_index+1]))
-            retList.append([str(str_dateList[date_index]),posts_count])
         elif base is not None:
             posts_count = len(Post.objects.filter(base=base,created_at__gt=dateList[date_index],created_at__lte=dateList[date_index+1]))
-            retList.append([str(str_dateList[date_index]),posts_count])
-        print(str_dateList[0])
+        else:
+            posts_count = len(Post.objects.filter(created_at__gt=dateList[date_index],created_at__lte=dateList[date_index+1]))
+        retList.append([str(str_dateList[date_index]),posts_count])
     return retList
     
 

@@ -214,7 +214,7 @@ class Channel(models.Model):
         """直近7日間のチャンネル全体の投稿数とその前の7日間との差分を返す"""
         two_week_posts_count = self.two_week_posts_count()
         one_week_posts_count = self.one_week_posts_count()
-        compare_posts_count = two_week_posts_count - one_week_posts_count
+        compare_posts_count = one_week_posts_count - two_week_posts_count
         return compare_posts_count
 
     def __str__(self):
