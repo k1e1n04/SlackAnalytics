@@ -60,6 +60,30 @@ class Base(models.Model):
         """拠点の部署を全て返す"""
         base_departments = Department.objects.filter(base=self)
         return base_departments
+    
+    def active_employee(self):
+        """1週間の投稿数が多いメンバーを5人返す"""
+        employees = Employee.objects.filter(base=self)
+        #1週間の投稿数が多い順に並び替え
+        employees = sorted(employees, key=lambda employee: employee.one_week_posts_count(),reverse=True)
+        active_employees = employees[0:5]
+        return active_employees
+
+    def passive_employee(self):
+        """1週間の投稿数が少ないメンバーを5人返す"""
+        employees = Employee.objects.filter(base=self)
+        #1週間の投稿数が多い順に並び替え
+        employees = sorted(employees, key=lambda employee: employee.one_week_posts_count())
+        passive_employees = employees[0:5]
+        return passive_employees
+
+    def less_motivation_employee(self):
+        """1週間の投稿数の減少幅が大きいメンバーを5人返す"""
+        employees = Employee.objects.filter(base=self)
+        #1週間の投稿数が多い順に並び替え
+        employees = sorted(employees, key=lambda employee: employee.compare_posts_count())
+        less_motivation_employees = employees[0:5]
+        return less_motivation_employees
 
     def posts_count_per_department(self):
         """拠点の各部署あたりの投稿数をリストで返す"""

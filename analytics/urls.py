@@ -5,6 +5,8 @@ app_name = 'analytics'
 
 urlpatterns = [
     path('',views.BaseDashboard.as_view(),name='base_dashboard'),
+    #サマリー
+    path('summary',views.SummaryView.as_view(),name='summary'),
     #ダッシュボード
     path('basedashboard/',views.BaseDashboard.as_view(),name='base_dashboard'),
     path('basedashboard/<int:pk>',views.BaseDetailDashboard.as_view(),name='base_detail_dashboard'),

@@ -7,8 +7,26 @@ import analytics.domain
 import analytics.process.gettime as gettime
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+#　1週間前の日付を取得
 one_week_ago = gettime.get_diff_days_ago(7)
+#　2週間前の日付を取得
 two_week_ago = gettime.get_diff_days_ago(14)
+
+#自分が所属している拠点のサマリー
+class SummaryView(LoginRequiredMixin,generic.TemplateView):
+    """自拠点のサマリー\n
+    
+    """
+    template_name = "analytics/summary/summary.html"
+    def get_context_data(self, **kwargs):
+        context= super().get_context_data(**kwargs)
+        base = Base.objects.filter(name=self.request.user.base).first()
+        next_monday = gettime.get_next_monday()
+        dateList,str_dateList = gettime.six_month_dateList(next_monday)
+        post_date_list = analytics.domain.getGoogleChartPosts(dateList,str_dateList,base=base)
+        context['postDateList'] = post_date_list
+        context['base'] = base
+        return context
 
 #拠点別ダッシュボード
 class BaseDashboard(LoginRequiredMixin,generic.ListView):
@@ -72,6 +90,7 @@ class EmployeeDashboard(LoginRequiredMixin,generic.ListView):
         except:
             query = None
         employees = Employee.objects.search(query=query)
+        employees = sorted(employees, key=lambda employee: employee.one_week_posts_count(),reverse=True)
         return employees
 
 class EmployeeDetailDashboard(LoginRequiredMixin,generic.DetailView):
