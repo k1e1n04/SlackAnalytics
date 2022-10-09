@@ -83,7 +83,7 @@ TEMPLATES = [
     },
 ]
 
-LOGIN_REDIRECT_URL = '/basedashboard/'
+LOGIN_REDIRECT_URL = '/summary'
 
 WSGI_APPLICATION = 'mysite.wsgi.application'
 
