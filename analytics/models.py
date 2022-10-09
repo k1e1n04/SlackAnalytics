@@ -139,7 +139,7 @@ class Base(models.Model):
         """直近7日間の拠点全体の投稿数とその前の7日間との差分を返す"""
         two_week_posts_count = self.two_week_posts_count()
         one_week_posts_count = self.one_week_posts_count()
-        compare_posts_count = two_week_posts_count - one_week_posts_count
+        compare_posts_count = one_week_posts_count - two_week_posts_count
         return compare_posts_count
 
     def one_week_posts_count(self):
@@ -274,7 +274,7 @@ class Employee(models.Model):
         """直近7日間の該当メンバーの投稿数とその前の7日間との差分を返す"""
         two_week_posts_count = self.two_week_posts_count()
         one_week_posts_count = self.one_week_posts_count()
-        compare_posts_count = two_week_posts_count - one_week_posts_count
+        compare_posts_count = one_week_posts_count - two_week_posts_count
         return compare_posts_count
 
     def __str__(self):
