@@ -13,6 +13,8 @@ urlpatterns = [
     path('channeldashboard/',views.ChannelDashboard.as_view(),name='channel_dashboard'),
     path('employeedashboard/',views.EmployeeDashboard.as_view(),name='employee_dashboard'),
     path('employeedashboard/<int:pk>',views.EmployeeDetailDashboard.as_view(),name='employee_detail_dashboard'),
+    #団体登録
+    path('organization/create/', views.OrganizationCreateView.as_view(), name='organization_create'),
     #拠点管理関連
     path('base/index/',views.BaseListView.as_view(),name='base_index'),
     path('base/create/', views.BaseCreateView.as_view(), name='base_create'),

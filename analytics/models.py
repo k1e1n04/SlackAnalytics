@@ -1,3 +1,4 @@
+from analytics.field import EncryptedTextField
 from django.db import models
 from django.db.models import Q
 import analytics.process.gettime as gettime
@@ -52,6 +53,14 @@ class ModelManager(models.Manager):
     def base_search(self,query=None):
         """ModelQuerySetで定義したbase_searchメソッドを.objects.base_searchで使えるように紐付け"""
         return self.get_queryset().base_search(query=query)
+
+class Organization(models.Model):
+    name = models.CharField(verbose_name="団体名",max_length=100,unique=True)
+    slack_app_token = EncryptedTextField(verbose_name="SlackAppToken",max_length=100)
+    objects = ModelManager()
+    def __str__(self):
+        return self.name 
+
 
 class Base(models.Model):
     name = models.CharField(verbose_name="拠点",max_length=50,unique=True)
@@ -145,7 +154,7 @@ class Base(models.Model):
     def one_week_posts_count(self):
         """直近7日間拠点全体の投稿数を返す"""
         try:
-            one_week_posts = Post.objects.filter(base=self,created_at__gt=two_week_ago,created_at__lte=one_week_ago)
+            one_week_posts = Post.objects.filter(base=self,created_at__gt=one_week_ago)
             one_week_posts_count = len(one_week_posts)
         except:
             one_week_posts_count = 0

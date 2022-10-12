@@ -1,16 +1,33 @@
 from django.views import generic
 from .forms import EmployeeForm
-from .models import Base,Department,Channel,Employee
+from .models import Base,Department,Channel,Employee, Organization
 from django.views import generic
 from django.urls import reverse_lazy
 import analytics.domain
 import analytics.process.gettime as gettime
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import redirect
 
 #　1週間前の日付を取得
 one_week_ago = gettime.get_diff_days_ago(7)
 #　2週間前の日付を取得
 two_week_ago = gettime.get_diff_days_ago(14)
+
+class OrganizationCreateView(LoginRequiredMixin,generic.edit.CreateView):
+    """団体登録画面\n
+    名前、SlackAppTokenを登録し、団体を新たに作成する\n
+    全ての項目の入力は必須\n
+    スーパーユーザーのみが閲覧可能
+    """
+    model = Organization
+    template_name = "analytics/organization/organization_form.html"
+    fields = '__all__'
+    success_url = reverse_lazy('analytics:summary')
+    def get(self, request):
+        # スタッフユーザーでなければサマリーページへ
+        if not request.user.is_superuser:
+            return redirect('/summary')
+        return super().get(request)
 
 #自分が所属している拠点のサマリー
 class SummaryView(LoginRequiredMixin,generic.TemplateView):
