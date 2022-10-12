@@ -21,6 +21,7 @@ dotenv_path = join(dirname(__file__), ".env")
 
 SLACK_URL = os.getenv("SLACK_URL")
 TOKEN = os.getenv("TOKEN")
+AES_KEY = os.getenv("AES_KEY")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent

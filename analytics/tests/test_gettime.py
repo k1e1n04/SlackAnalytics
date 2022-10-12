@@ -99,7 +99,6 @@ class TestSixMonthDateList(TestCase):
     def test_six_month_dateList_case001(self):
         next_monday = datetime(2022,9,12)
         dateList,str_dateList = six_month_dateList(next_monday)
-        print(str_dateList)
         # 想定される6ヶ月分の月曜日のdatetimeList
         sample_dateList = [datetime(2022, 4, 4, 0, 0), datetime(2022, 4, 11, 0, 0), datetime(2022, 4, 18, 0, 0), datetime(2022, 4, 25, 0, 0), datetime(2022, 5, 2, 0, 0), datetime(2022, 5, 9, 0, 0), datetime(2022, 5, 16, 0, 0), datetime(2022, 5, 23, 0, 0), datetime(2022, 5, 30, 0, 0), datetime(2022, 6, 6, 0, 0), datetime(2022, 6, 13, 0, 0), datetime(2022, 6, 20, 0, 0), datetime(2022, 6, 27, 0, 0), datetime(2022, 7, 4, 0, 0), datetime(2022, 7, 11, 0, 0), datetime(2022, 7, 18, 0, 0), datetime(2022, 7, 25, 0, 0), datetime(2022, 8, 1, 0, 0), datetime(2022, 8, 8, 0, 0), datetime(2022, 8, 15, 0, 0), datetime(2022, 8, 22, 0, 0), datetime(2022, 8, 29, 0, 0), datetime(2022, 9, 5, 0, 0), datetime(2022, 9, 12, 0, 0)]
         # 想定される6ヶ月分の月曜日の文字列List
