@@ -64,6 +64,12 @@ class Organization(models.Model):
 
 class Base(models.Model):
     name = models.CharField(verbose_name="拠点",max_length=50,unique=True)
+    organization = models.ForeignKey(
+        Organization,
+        on_delete=models.CASCADE,
+        verbose_name='団体',
+        default=1,
+    )
     objects = ModelManager()
     def base_departments(self):
         """拠点の部署を全て返す"""
@@ -182,6 +188,12 @@ class Base(models.Model):
 
 class Department(models.Model):
     name = models.CharField(verbose_name="部署",max_length=50)
+    organization = models.ForeignKey(
+        Organization,
+        on_delete=models.CASCADE,
+        verbose_name='団体',
+        default=1,
+    )
     base = models.ForeignKey(
         Base,
         on_delete=models.PROTECT,
@@ -194,6 +206,12 @@ class Department(models.Model):
 class Channel(models.Model):
     name = models.CharField(verbose_name="チャンネル",max_length=50)
     channel_id = models.CharField(verbose_name="チャンネルID",max_length=50,default="",unique=True)
+    organization = models.ForeignKey(
+        Organization,
+        on_delete=models.CASCADE,
+        verbose_name='団体',
+        default=1,
+    )
     base = models.ForeignKey(
         Base,
         on_delete=models.PROTECT,
@@ -235,6 +253,12 @@ class Employee(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     slack_id = models.CharField(verbose_name="SlackID",max_length=30,unique=True)
+    organization = models.ForeignKey(
+        Organization,
+        on_delete=models.CASCADE,
+        verbose_name='団体',
+        default=1,
+    )
     base = models.ForeignKey(
         Base,
         on_delete=models.PROTECT,
@@ -291,6 +315,12 @@ class Employee(models.Model):
 
 
 class Post(models.Model):
+    organization = models.ForeignKey(
+        Organization,
+        on_delete=models.CASCADE,
+        verbose_name='団体',
+        default=1,
+    )
     channel = models.ForeignKey(
         Channel,
         on_delete=models.PROTECT,
