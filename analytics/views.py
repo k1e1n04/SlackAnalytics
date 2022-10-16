@@ -24,7 +24,7 @@ class OrganizationCreateView(LoginRequiredMixin,generic.edit.CreateView):
     fields = '__all__'
     success_url = reverse_lazy('analytics:summary')
     def get(self, request):
-        # スタッフユーザーでなければサマリーページへ
+        # スーパーユーザーでなければサマリーページへ
         if not request.user.is_superuser:
             return redirect('/summary')
         return super().get(request)
@@ -42,8 +42,8 @@ class SummaryView(LoginRequiredMixin,generic.TemplateView):
         dateList,str_dateList = gettime.six_month_dateList(next_monday)
         if base is None:
             post_date_list = analytics.domain.getGoogleChartPosts(dateList,str_dateList,base=base)
-            channel_count = len(Department.objects.all())
-            member_count = len(Employee.objects.all())
+            channel_count = len(Department.objects.filter(organization=self.request.user.organization))
+            member_count = len(Employee.objects.filter(organization=self.request.user.organization))
             base = {"name":"全拠点","channel_count":channel_count,"member_count":member_count,}
         else:
             post_date_list = analytics.domain.getGoogleChartPosts(dateList,str_dateList,base=base)
@@ -63,7 +63,7 @@ class BaseDashboard(LoginRequiredMixin,generic.ListView):
             query= self.request.GET.get('query')
         except:
             query = None
-        bases = Base.objects.base_search(query=query)
+        bases = Base.objects.base_search(query=query).filter(organization=self.request.user.organization)
         return bases
 
 # 拠点の詳細ダッシュボード
@@ -97,7 +97,7 @@ class ChannelDashboard(LoginRequiredMixin,generic.ListView):
             query= self.request.GET.get('query')
         except:
             query = None
-        channels = Channel.objects.search(query=query).order_by("name")
+        channels = Channel.objects.search(query=query).filter(organization=self.request.user.organization).order_by("name")
         return channels
 
 #メンバー別ダッシュボード
@@ -112,7 +112,7 @@ class EmployeeDashboard(LoginRequiredMixin,generic.ListView):
             query= self.request.GET.get('query')
         except:
             query = None
-        employees = Employee.objects.search(query=query)
+        employees = Employee.objects.search(query=query).filter(organization=self.request.user.organization)
         employees = sorted(employees, key=lambda employee: employee.one_week_posts_count(),reverse=True)
         return employees
 
@@ -145,7 +145,7 @@ class EmployeeListView(LoginRequiredMixin,generic.ListView):
             query= self.request.GET.get('query')
         except:
             query = None
-        employees = Employee.objects.search(query=query)
+        employees = Employee.objects.search(query=query).filter(organization=self.request.user.organization)
         return employees
 
 class EmployeeCreateView(LoginRequiredMixin,generic.edit.CreateView):
@@ -160,10 +160,10 @@ class EmployeeCreateView(LoginRequiredMixin,generic.edit.CreateView):
     success_url = reverse_lazy('analytics:employee_index')
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['base_list'] = Base.objects.all()
+        context['base_list'] = Base.objects.filter(organization=self.request.user.organization)
         return context
-
     def form_valid(self, form):
+        form.instance.organization = self.request.user.organization
         form.save()
         return super(EmployeeCreateView, self).form_valid(form)
 
@@ -175,8 +175,12 @@ class EmployeeUpdateView(LoginRequiredMixin,generic.UpdateView):
     """
     model = Employee
     fields = ['name','base','department']
-    template_name = "analytics/update.html"
+    template_name = "analytics/filter_update.html"
     success_url = reverse_lazy("analytics:employee_index")
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['base_list'] = Base.objects.filter(organization=self.request.user.organization)
+        return context
 
 class EmployeeDeleteView(LoginRequiredMixin,generic.DeleteView):
     """メンバー削除画面\n
@@ -200,7 +204,7 @@ class ChannelListView(LoginRequiredMixin,generic.ListView):
             query= self.request.GET.get('query')
         except:
             query = None
-        channels = Channel.objects.order_by("name").search(query=query)
+        channels = Channel.objects.order_by("name").search(query=query).filter(organization=self.request.user.organization)
         return channels
 
 class ChannelCreateView(LoginRequiredMixin,generic.edit.CreateView):
@@ -215,8 +219,12 @@ class ChannelCreateView(LoginRequiredMixin,generic.edit.CreateView):
     success_url = reverse_lazy('analytics:channel_index')
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['base_list'] = Base.objects.all()
+        context['base_list'] = Base.objects.filter(organization=self.request.user.organization)
         return context
+    def form_valid(self, form):
+        form.instance.organization = self.request.user.organization
+        return super(ChannelCreateView, self).form_valid(form)
+    
 
 class ChannelUpdateView(LoginRequiredMixin,generic.UpdateView):
     """チャンネル情報更新画面\n
@@ -225,9 +233,13 @@ class ChannelUpdateView(LoginRequiredMixin,generic.UpdateView):
     拠点を選択すると部署は自動で絞り込まれる
     """
     model = Channel
-    template_name = "analytics/update.html"
+    template_name = "analytics/filter_update.html"
     success_url = reverse_lazy("analytics:channel_index")
-    fields = '__all__'
+    fields = ['name','base','department','channel_id']
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['base_list'] = Base.objects.filter(organization=self.request.user.organization)
+        return context
 
 class ChannelDeleteView(LoginRequiredMixin,generic.DeleteView):
     """チャンネル削除画面\n
@@ -250,7 +262,7 @@ class BaseListView(LoginRequiredMixin,generic.ListView):
             query= self.request.GET.get('query')
         except:
             query = None
-        bases = Base.objects.base_search(query=query)
+        bases = Base.objects.base_search(query=query).filter(organization=self.request.user.organization)
         return bases
 
 
@@ -264,6 +276,7 @@ class BaseCreateView(LoginRequiredMixin,generic.edit.CreateView):
     fields = ['name']
     success_url = reverse_lazy('analytics:base_index')
     def form_valid(self, form):
+        form.instance.organization = self.request.user.organization
         return super(BaseCreateView, self).form_valid(form)
 
 #部署管理関連
@@ -278,7 +291,7 @@ class DepartmentListView(LoginRequiredMixin,generic.ListView):
             query= self.request.GET.get('query')
         except:
             query = None
-        departments = Department.objects.dp_search(query=query)
+        departments = Department.objects.dp_search(query=query).filter(organization=self.request.user.organization)
         return departments
 
 class DepartmentCreateView(LoginRequiredMixin,generic.edit.CreateView):
@@ -291,6 +304,7 @@ class DepartmentCreateView(LoginRequiredMixin,generic.edit.CreateView):
     fields = ['name','base'] # '__all__'
     success_url = reverse_lazy('analytics:department_index')
     def form_valid(self, form):
+        form.instance.organization = self.request.user.organization
         return super(DepartmentCreateView, self).form_valid(form)
 
 class DepartmentUpdateView(LoginRequiredMixin,generic.UpdateView):
@@ -301,7 +315,7 @@ class DepartmentUpdateView(LoginRequiredMixin,generic.UpdateView):
     model = Department
     template_name = "analytics/update.html"
     success_url = reverse_lazy("analytics:department_index")
-    fields = '__all__'
+    fields = ['name','base']
 
 class DepartmentDeleteView(LoginRequiredMixin,generic.DeleteView):
     """部署削除画面\n
