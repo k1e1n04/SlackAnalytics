@@ -30,6 +30,9 @@ class SignUpView(LoginRequiredMixin,generic.CreateView):
     form_class = UserCreateForm
     success_url = reverse_lazy('analytics:base_dashboard')
     template_name = 'accounts/signup.html'
+    def form_valid(self, form):
+        form.instance.organization = self.request.user.organization
+        return super(SignUpView, self).form_valid(form)
 
 class UserList(LoginRequiredMixin,generic.ListView):
     """管理者ユーザー一覧画面\n

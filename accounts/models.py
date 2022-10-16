@@ -4,6 +4,7 @@ from django.contrib.auth.base_user import AbstractBaseUser
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 from django.db.models import Q
+from analytics.models import Organization
   
 class  UserModelQuerySet(models.QuerySet):
     def user_search(self,query=None):
@@ -53,6 +54,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(_('名前'), max_length=30)
     last_name = models.CharField(_('名字'), max_length=150)
     base = models.CharField(_('拠点'), max_length=150)
+    organization = models.ForeignKey(
+        Organization,
+        on_delete=models.CASCADE,
+        verbose_name='団体',
+        default=1,
+    )
   
     is_staff = models.BooleanField(
         _('staff status'),
