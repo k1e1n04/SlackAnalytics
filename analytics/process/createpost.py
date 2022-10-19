@@ -17,7 +17,7 @@ def get_slack_posts(channel,ago,employee):
     :type msgs: list of JSON
     """
     SLACK_URL = settings.SLACK_URL
-    TOKEN = settings.TOKEN
+    TOKEN = employee.organization.slack_app_token
     payload = {
         "channel" : channel.channel_id,
         "user_id" : employee.slack_id,
@@ -67,6 +67,6 @@ def make_post(channel,employee,messages):
     """
     for message in messages:
         try:
-            Post.objects.create(channel=channel,base=channel.base,employee=employee,created_at=message["ts"])
+            Post.objects.create(channel=channel,base=channel.base,employee=employee,created_at=message["ts"],organization=employee.organization)
         except:
             continue
