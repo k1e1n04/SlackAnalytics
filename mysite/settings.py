@@ -20,9 +20,7 @@ load_dotenv()
 
 dotenv_path = join(dirname(__file__), ".env")
 
-# ログ設定ファイルの読み込み
-log_conf_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),"../logging.ini")
-logging.config.fileConfig(log_conf_filename)
+
 
 SLACK_URL = os.getenv("SLACK_URL")
 AES_KEY = os.getenv("AES_KEY")
@@ -162,8 +160,14 @@ except ImportError:
     pass
 
 if not DEBUG:
+    # ログ設定ファイルの読み込み
+    log_conf_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),"../logging.ini")
     import django_heroku
     django_heroku.settings(locals())
     db_from_env = dj_database_url.config(conn_max_age=600, ssl_require=True)
     DATABASES['default'].update(db_from_env)
     STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+else:
+    # ログ設定ファイルの読み込み
+    log_conf_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),"../logging_local.ini")
+logging.config.fileConfig(log_conf_filename)

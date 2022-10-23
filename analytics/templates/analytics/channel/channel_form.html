@@ -1,7 +1,7 @@
 {% extends 'layout.html' %}
 {% block content %}
 
-<h4>チャンネルの登録</h4>
+<h4>チャンネルの{{ object|yesno:'更新,作成'}}</h4>
 
 <form action='' method='post'>{% csrf_token %}
   <div class="card col-8">
@@ -31,6 +31,67 @@
     <script>
         const BaseElement = $('#id_base');
         const departmentElement = $('#id_department');
+        // ユーザーの団体に応じて拠点を変える
+        const changeBase = (select) => {
+            BaseElement.children().remove();
+
+            const bases = [
+              {% for base in base_list %}
+                {
+                  'pk': '{{base.pk}}',
+                  'name': '{{base.name}}'
+                },
+              {% endfor %}
+            ]
+
+            for (const base of bases) {
+                const option = $('<option>');
+                option.val(base['pk']);
+                option.text(base['name']);
+                BaseElement.append(option);
+            }
+
+            if (select !== undefined) {
+                BaseElement.val(select);
+            }
+        };
+
+        changeBase();
+
+
+        if (BaseElement.val()) {
+            const selectedBase = BaseElement.val();
+            changeBase(selectedBase);
+        }
+
+        // ユーザーの団体に応じて部署を変える
+        const changeFirstDepartments = (select) => {
+            departmentElement.children().remove();
+
+            const first_departments = [
+              {% for department in department_list %}
+                {
+                  'pk': '{{department.pk}}',
+                  'name': '{{department.name}}'
+                },
+              {% endfor %}
+            ]
+
+            for (const first_department of first_departments) {
+                const option = $('<option>');
+                option.val(first_department['pk']);
+                option.text(first_department['name']);
+                departmentElement.append(option);
+            }
+
+            if (select !== undefined) {
+                departmentElement.val(select);
+            }
+        };
+
+        changeFirstDepartments();
+
+        // 選択された拠点に応じて部署を変える
         const departments = {
             {% for base in base_list %}
                 '{{ base.pk }}': [

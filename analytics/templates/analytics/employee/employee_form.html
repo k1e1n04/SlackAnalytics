@@ -1,7 +1,7 @@
 {% extends 'layout.html' %}
 {% block content %}
 
-<h4>メンバーの登録</h4>
+<h4>メンバーの{{ object|yesno:'更新,作成'}}</h4>
 <form action='' method='post'>{% csrf_token %}
   <div class="card">
     <div class="card-body">
@@ -42,6 +42,39 @@
                 ],
             {% endfor %}
         };
+
+        // ユーザーの団体に応じて拠点を変える
+        const changeBase = (select) => {
+            BaseElement.children().remove();
+
+            const bases = [
+              {% for base in base_list %}
+                {
+                  'pk': '{{base.pk}}',
+                  'name': '{{base.name}}'
+                },
+              {% endfor %}
+            ]
+
+            for (const base of bases) {
+                const option = $('<option>');
+                option.val(base['pk']);
+                option.text(base['name']);
+                BaseElement.append(option);
+            }
+
+            if (select !== undefined) {
+                BaseElement.val(select);
+            }
+        };
+
+        changeBase();
+
+
+        if (BaseElement.val()) {
+            const selectedBase = BaseElement.val();
+            changeBase(selectedBase);
+        }
 
 
         const changeDepartment = (select) => {
