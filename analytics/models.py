@@ -61,6 +61,118 @@ class Organization(models.Model):
     def __str__(self):
         return self.name 
 
+    def organization_bases(self):
+        """団体の拠点を全て返す"""
+        organization_bases = Base.objects.filter(organization=self)
+        return organization_bases
+
+    def base_count(self):
+        """団体が所有している拠点数を返す"""
+        try:
+            base_count = len(Base.objects.filter(organization=self))
+        except:
+            base_count = 0
+        return base_count
+
+    def posts_count_per_base(self):
+        """団体の各拠点あたりの投稿数をリストで返す"""
+        # 1ヶ月前の日付を取得
+        one_month_ago = gettime.get_diff_month_ago(1)
+        # 該当メンバーが所属している拠点の部署を全て取得
+        organization_bases = self.organization_bases()
+        posts_count_per_base = []
+        for base in organization_bases:
+            channels = Channel.objects.filter(base=base)
+            base_posts = Post.objects.filter(base=base,created_at__gt=one_month_ago)
+            base_posts_count = len(base_posts)
+            posts_count_per_base.append([base.name,base_posts_count])
+        return posts_count_per_base
+
+    def active_employee(self):
+        """1週間の投稿数が多いメンバーを5人返す"""
+        employees = Employee.objects.filter(organization=self)
+        #1週間の投稿数が多い順に並び替え
+        employees = sorted(employees, key=lambda employee: employee.one_week_posts_count(),reverse=True)
+        active_employees = employees[0:5]
+        return active_employees
+
+    def passive_employee(self):
+        """1週間の投稿数が少ないメンバーを5人返す"""
+        employees = Employee.objects.filter(organization=self)
+        #1週間の投稿数が多い順に並び替え
+        employees = sorted(employees, key=lambda employee: employee.one_week_posts_count())
+        passive_employees = employees[0:5]
+        return passive_employees
+
+    def less_motivation_employee(self):
+        """1週間の投稿数の減少幅が大きいメンバーを5人返す"""
+        employees = Employee.objects.filter(organization=self)
+        #1週間の投稿数が多い順に並び替え
+        employees = sorted(employees, key=lambda employee: employee.compare_posts_count())
+        less_motivation_employees = employees[0:5]
+        return less_motivation_employees
+
+    def one_week_posts_count(self):
+        """直近7日間団体全体の投稿数を返す"""
+        try:
+            one_week_posts = Post.objects.filter(organization=self,created_at__gt=one_week_ago)
+            one_week_posts_count = len(one_week_posts)
+        except:
+            one_week_posts_count = 0
+        return  one_week_posts_count
+    
+    def two_week_posts_count(self):
+        """直近14日前から7日前までの団体全体の投稿数を返す"""
+        try:
+            two_week_posts = Post.objects.filter(organization=self,created_at__gt=two_week_ago,created_at__lte=one_week_ago)
+            two_week_posts_count = len(two_week_posts)
+        except:
+            two_week_posts_count = 0
+        return  two_week_posts_count
+
+    def member_count(self):
+        """団体のメンバー数を返す"""
+        try:
+            member_count = len(Employee.objects.filter(organization=self))
+        except:
+            member_count = 0
+        return member_count
+
+    def compare_per_posts(self):
+        """直近7日間のメンバーあたりの投稿数とその前の7日間との差分を返す"""
+        per_posts = self.per_posts()
+        two_week_per_posts = self.two_week_per_posts()
+        compare_per_posts = per_posts -two_week_per_posts
+        return compare_per_posts
+
+    def two_week_per_posts(self):
+        """直近14日前から7日前までの団体のメンバーあたりの投稿数を返す"""
+        two_week_posts_count = self.two_week_posts_count()
+        member_count = self.member_count
+        try:
+            two_week_per_posts = round(two_week_posts_count/member_count)
+        except:
+            two_week_per_posts = 0
+        return two_week_per_posts
+
+    def per_posts(self):
+        """直近7日間団体のメンバーあたりの投稿数を返す"""
+        one_week_posts_count = self.one_week_posts_count()
+        member_count = self.member_count()
+        try:
+            per_posts = round(one_week_posts_count/member_count)
+        except:
+            per_posts = 0
+        return per_posts
+
+    def channel_count(self):
+        """団体が所有しているチャンネル数を返す"""
+        try:
+            channel_count = len(Channel.objects.filter(organization=self))
+        except:
+            channel_count = 0
+        return channel_count
+
 
 class Base(models.Model):
     name = models.CharField(verbose_name="拠点",max_length=50,unique=True)

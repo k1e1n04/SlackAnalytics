@@ -1,21 +1,23 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-        <h4>{{base.name}}のダッシュボード</h4>
+        <h4>{{organization.name}}のダッシュボード</h4>
         <table class='table' style="background-color: white;">
             <tr>
-                <th>拠点名</th>
+                <th>ワークスペース名</th>
+                <th>拠点数</th>
                 <th>チャンネル数</th>
                 <th>メンバー数</th>
                 <th>今週の投稿数</th>
                 <th>今週のメンバー<br>平均投稿数</th>
             </tr>
                 <tr>
-                    <td style="color: #3d9ae5 ;"><a href="{% url 'analytics:base_detail_dashboard' base.pk %}">{{base.name}}</a></td>
-                    <td>{{base.channel_count}}</td>
-                    <td>{{base.member_count}}</td>
-                    <td class="number">{{base.one_week_posts_count}}<span>(先週比{{base.compare_posts_count}})</span></td>
-                    <td class="number">{{base.per_posts}}<span>(先週比{{base.compare_per_posts}})</span></td>
+                    <td style="color: #3d9ae5 ;">{{organization.name}}</a></td>
+                    <td>{{organization.base_count}}</td>
+                    <td>{{organization.channel_count}}</td>
+                    <td>{{organization.member_count}}</td>
+                    <td class="number">{{organization.one_week_posts_count}}<span>(先週比{{organization.compare_posts_count}})</span></td>
+                    <td class="number">{{organization.per_posts}}<span>(先週比{{organization.compare_per_posts}})</span></td>
                 </tr>
         </table>
         <h5>投稿数が多いメンバー</h5>
@@ -26,7 +28,7 @@
                     <th>部署名</th>
                     <th>今週の投稿数</th>
                 </tr>
-                {% for employee in base.active_employee %}
+                {% for employee in organization.active_employee %}
                     <tr>
                         <td style="color: #3d9ae5 ;"><a href="{% url 'analytics:employee_detail_dashboard' employee.pk %}">{{employee.name}}</a></td>
                         <td>{{employee.base.name}}</td>
@@ -43,7 +45,7 @@
                     <th>部署名</th>
                     <th>今週の投稿数</th>
                 </tr>
-                {% for employee in base.passive_employee %}
+                {% for employee in organization.passive_employee %}
                     <tr>
                         <td style="color: #3d9ae5 ;"><a href="{% url 'analytics:employee_detail_dashboard' employee.pk %}">{{employee.name}}</a></td>
                         <td>{{employee.base.name}}</td>
@@ -60,7 +62,7 @@
                     <th>部署名</th>
                     <th>今週の投稿数</th>
                 </tr>
-                {% for employee in base.less_motivation_employee %}
+                {% for employee in organization.less_motivation_employee %}
                     <tr>
                         <td style="color: #3d9ae5 ;"><a href="{% url 'analytics:employee_detail_dashboard' employee.pk %}">{{employee.name}}</a></td>
                         <td>{{employee.base.name}}</td>
@@ -104,13 +106,13 @@
         }
         function drawCircleChart() {
             {% autoescape off %}
-                var posts_count_department = {{base.posts_count_per_department}};
+                var posts_count_base = {{organization.posts_count_per_base}};
             {% endautoescape %}
             // Create the data table.
             var data = new google.visualization.DataTable();
             data.addColumn('string', '月');
             data.addColumn('number', '投稿数');
-            data.addRows(posts_count_department);
+            data.addRows(posts_count_base);
 
             // Set chart options
             var options = {

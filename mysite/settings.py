@@ -13,11 +13,16 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 from pathlib import Path
 import os
 from os.path import join, dirname
+import logging.config
 import dj_database_url
 from dotenv import load_dotenv
 load_dotenv() 
 
 dotenv_path = join(dirname(__file__), ".env")
+
+# ログ設定ファイルの読み込み
+log_conf_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),"../logging.ini")
+logging.config.fileConfig(log_conf_filename)
 
 SLACK_URL = os.getenv("SLACK_URL")
 AES_KEY = os.getenv("AES_KEY")
@@ -122,6 +127,8 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+
 
 
 # Internationalization

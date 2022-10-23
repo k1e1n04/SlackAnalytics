@@ -4,6 +4,9 @@ from datetime import datetime
 import requests
 import time
 
+import logging
+logger = logging.getLogger('scheduler')
+
 def get_slack_posts(channel,ago,employee):
     """ SlackAPIを叩いてmessagesのみを返す\n
     チャンネル、oldest、メンバーを引数として受け取り、
@@ -16,6 +19,7 @@ def get_slack_posts(channel,ago,employee):
     :return msgs: 投稿取得SlackAPIのレスポンスの"messages"のみを抽出したもの
     :type msgs: list of JSON
     """
+    logger.debug("get_slack_posts")
     SLACK_URL = settings.SLACK_URL
     TOKEN = employee.organization.slack_app_token
     payload = {
@@ -26,7 +30,10 @@ def get_slack_posts(channel,ago,employee):
     headersAuth = {
         'Authorization' : 'Bearer ' + str(TOKEN), 
     }
-    response = requests.get(SLACK_URL, headers=headersAuth, params=payload)
+    try:
+        response = requests.get(SLACK_URL, headers=headersAuth, params=payload)
+    except:
+        logger.error("Invalid SlackAPI request oraganization:{} base:{} department:{}".format(employee.organization,employee.base,employee.department))
     json_data = response.json()
     msgs = json_data['messages']
     time.sleep(1)
@@ -44,6 +51,7 @@ def analytics_preparation(msgs,employee):
     :return messages: それぞれのmessageのid(新たに作成)とdatetimeのdictが格納されたリスト
     :type messages: list of dicts
     """
+    logger.debug("analytics_preparation")
     messages = []
     i=1
     for m in msgs:
@@ -65,8 +73,10 @@ def make_post(channel,employee,messages):
     :param employee: Employeeインスタンス
     :param channel: Channelインスタンス
     """
+    logger.debug("make_post called")
     for message in messages:
         try:
             Post.objects.create(channel=channel,base=channel.base,employee=employee,created_at=message["ts"],organization=employee.organization)
         except:
+            logger.warning("a Post created at {} already exist organization:{} base:{} channel:{}".format(message["ts"],employee.organization,channel.base,channel))
             continue
