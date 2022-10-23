@@ -175,13 +175,20 @@ class Organization(models.Model):
 
 
 class Base(models.Model):
-    name = models.CharField(verbose_name="拠点",max_length=50,unique=True)
+    name = models.CharField(verbose_name="拠点",max_length=50)
     organization = models.ForeignKey(
         Organization,
         on_delete=models.CASCADE,
         verbose_name='団体',
         default=1,
     )
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name", "organization"],
+                name="name_organization_unique"
+            ),
+        ]
     objects = ModelManager()
     def base_departments(self):
         """拠点の部署を全て返す"""
