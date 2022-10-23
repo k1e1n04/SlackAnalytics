@@ -50,7 +50,7 @@
               </li>
               {% if user.is_authenticated %}
                   <li class='nav-time'>
-                    <a href="{% url 'accounts:update' user.pk %}">{{ user.last_name }}{{ user.first_name }}</a>
+                    <a href="{% url 'accounts:update' user.pk %}">マイページ</a>
                   </li>
                   <li>
                       <a href='{% url "accounts:index" %}' class='user_list'>管理者ユーザー一覧</a>
