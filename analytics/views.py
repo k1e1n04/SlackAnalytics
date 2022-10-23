@@ -232,7 +232,7 @@ class EmployeeUpdateView(OnlyEmployeeOrganizationMixin,generic.UpdateView):
     logger.debug("EmployeeUpdateView called")
     model = Employee
     fields = ['name','base','department']
-    template_name = "analytics/filter_update.html"
+    template_name = "analytics/employee/employee_form.html"
     success_url = reverse_lazy("analytics:employee_index")
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -280,6 +280,7 @@ class ChannelCreateView(LoginRequiredMixin,generic.edit.CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['base_list'] = Base.objects.filter(organization=self.request.user.organization)
+        context['department_list'] = Department.objects.filter(organization=self.request.user.organization)
         return context
     def form_valid(self, form):
         form.instance.organization = self.request.user.organization
@@ -294,12 +295,13 @@ class ChannelUpdateView(OnlyChannelOrganizationMixin,generic.UpdateView):
     """
     logger.debug("ChannelUpdateView called")
     model = Channel
-    template_name = "analytics/filter_update.html"
+    template_name = "analytics/channel/channel_form.html"
     success_url = reverse_lazy("analytics:channel_index")
     fields = ['name','base','department','channel_id']
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['base_list'] = Base.objects.filter(organization=self.request.user.organization)
+        context['department_list'] = Department.objects.filter(organization=self.request.user.organization)
         return context
 
 class ChannelDeleteView(OnlyChannelOrganizationMixin,generic.DeleteView):
@@ -369,6 +371,10 @@ class DepartmentCreateView(LoginRequiredMixin,generic.edit.CreateView):
     template_name = "analytics/department/department_form.html"
     fields = ['name','base'] # '__all__'
     success_url = reverse_lazy('analytics:department_index')
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['base_list'] = Base.objects.filter(organization=self.request.user.organization)
+        return context
     def form_valid(self, form):
         form.instance.organization = self.request.user.organization
         return super(DepartmentCreateView, self).form_valid(form)
@@ -380,9 +386,13 @@ class DepartmentUpdateView(OnlyDepartmentOrganizationMixin,generic.UpdateView):
     """
     logger.debug("DepartmentUpdateView called")
     model = Department
-    template_name = "analytics/update.html"
+    template_name = "analytics/department/department_form.html"
     success_url = reverse_lazy("analytics:department_index")
     fields = ['name','base']
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['base_list'] = Base.objects.filter(organization=self.request.user.organization)
+        return context
 
 class DepartmentDeleteView(OnlyDepartmentOrganizationMixin,generic.DeleteView):
     """部署削除画面\n
